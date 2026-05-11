@@ -365,37 +365,35 @@ export default function Home() {
     <div style={{ background: "#f1f5f9", minHeight: "100vh", fontFamily: "-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif", WebkitFontSmoothing: "antialiased" }}>
 
       {/* ── NAV ── */}
-      <nav style={{ background: "#0f2744", position: "sticky", top: 0, zIndex: 200, boxShadow: "0 2px 8px rgba(0,0,0,0.18)" }}>
-        {/* Brand bar */}
-        <div style={{ height: "52px", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 28px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
+      <nav style={{ position: "sticky", top: 0, zIndex: 200, boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
+        {/* Brand bar — dark navy */}
+        <div style={{ height: "50px", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 28px", background: "#0f2744" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "linear-gradient(135deg, #f0c96a, #d4a843)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>🏔️</div>
-            <span style={{ fontWeight: 800, fontSize: "15px", color: "#fff", letterSpacing: "0.2px" }}>Montenegro Asset Monitor</span>
+            <div style={{ width: "30px", height: "30px", borderRadius: "7px", background: "linear-gradient(135deg, #f0c96a, #d4a843)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "15px" }}>🏔️</div>
+            <span style={{ fontWeight: 800, fontSize: "15px", color: "#fff" }}>Montenegro Asset Monitor</span>
             <span style={{ background: "rgba(240,201,106,0.2)", color: "#f0c96a", fontSize: "10px", fontWeight: 700, padding: "2px 8px", borderRadius: "4px", border: "1px solid rgba(240,201,106,0.4)" }}>ЛИЧНЫЙ АКТИВ</span>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "16px", fontSize: "12px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "14px", fontSize: "12px" }}>
             {monState?.updatedAt && (
-              <span style={{ color: "rgba(255,255,255,0.5)" }}>Мониторинг: <strong style={{ color: "rgba(255,255,255,0.85)" }}>{fmtDate(monState.updatedAt)}</strong></span>
+              <span style={{ color: "rgba(255,255,255,0.5)" }}>Мониторинг: <strong style={{ color: "#f0c96a" }}>{fmtDate(monState.updatedAt)}</strong></span>
             )}
-            <div style={{ display: "flex", alignItems: "center", gap: "5px", color: "rgba(255,255,255,0.85)", fontWeight: 600 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "5px", color: "#fff", fontWeight: 600 }}>
               <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 6px #22c55e" }} />
               {TODAY}
             </div>
           </div>
         </div>
-        {/* Tabs bar — distinct background */}
-        <div style={{ display: "flex", gap: "0", padding: "0 20px", background: "#162d4f" }}>
+        {/* Tabs bar — WHITE, clearly separated */}
+        <div style={{ display: "flex", gap: "0", padding: "0 20px", background: "#fff", borderBottom: "2px solid #e2e8f0" }}>
           {TABS.map(t => (
             <button key={t.id} onClick={() => setTab(t.id)} style={{
               padding: "11px 16px", fontSize: "13px",
               fontWeight: tab === t.id ? 700 : 500,
-              color: tab === t.id ? "#f0c96a" : "rgba(255,255,255,0.6)",
-              background: tab === t.id ? "rgba(240,201,106,0.1)" : "none",
-              border: "none", cursor: "pointer",
-              borderBottom: tab === t.id ? "2px solid #f0c96a" : "2px solid transparent",
-              borderRadius: tab === t.id ? "4px 4px 0 0" : "0",
+              color: tab === t.id ? "#1d4ed8" : "#64748b",
+              background: "none", border: "none", cursor: "pointer",
+              borderBottom: tab === t.id ? "3px solid #1d4ed8" : "3px solid transparent",
               display: "flex", alignItems: "center", gap: "6px",
-              transition: "all 0.15s",
+              transition: "color 0.15s",
             }}>
               {t.icon} {t.label}
               {t.id === "cases" && <span style={{ background: "#fef3c7", color: "#92400e", fontSize: "10px", fontWeight: 700, padding: "0 5px", borderRadius: "10px" }}>5</span>}
@@ -459,7 +457,7 @@ export default function Home() {
             {/* MAIN DASHBOARD GRID */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px", marginBottom: "14px" }}>
 
-              {/* Судебные дела — мини дашборд */}
+              {/* Судебные дела — полный список */}
               <Card>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
                   <Sec>⚖️ Судебные дела</Sec>
@@ -470,14 +468,23 @@ export default function Home() {
                   const updates = monState?.caseUpdates[c.id] || [];
                   return (
                     <button key={c.id} onClick={() => { setTab("cases"); setOpenCase(c.id); }}
-                      style={{ width: "100%", display: "flex", alignItems: "center", gap: "8px", padding: "8px 10px", marginBottom: "4px", borderRadius: "7px", background: "#f8fafc", border: "1px solid #f1f5f9", cursor: "pointer", textAlign: "left" }}>
-                      <span style={{ width: "7px", height: "7px", borderRadius: "50%", background: s.dot, flexShrink: 0 }} />
-                      <span style={{ fontSize: "11px", fontWeight: 700, color: "#fff", background: "#1d4ed8", padding: "1px 6px", borderRadius: "4px", flexShrink: 0 }}>{c.id}</span>
-                      <span style={{ fontSize: "11px", color: "#374151", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.title.slice(0, 32)}…</span>
-                      <div style={{ display: "flex", gap: "4px", alignItems: "center", flexShrink: 0 }}>
-                        {c.nextHearing !== "—" && <span style={{ fontSize: "10px", color: "#dc2626", fontWeight: 700 }}>📅{c.nextHearing}</span>}
-                        {updates.length > 0 && <span style={{ fontSize: "10px", color: "#3b82f6", fontWeight: 700, background: "#eff6ff", padding: "1px 5px", borderRadius: "6px" }}>+{updates.length}</span>}
+                      style={{ width: "100%", padding: "9px 10px", marginBottom: "5px", borderRadius: "8px", background: "#f8fafc", border: "1px solid #e2e8f0", cursor: "pointer", textAlign: "left", display: "block" }}>
+                      {/* Row 1: badge + status + date */}
+                      <div style={{ display: "flex", alignItems: "center", gap: "7px", marginBottom: "4px" }}>
+                        <span style={{ width: "7px", height: "7px", borderRadius: "50%", background: s.dot, flexShrink: 0, display: "inline-block" }} />
+                        <span style={{ fontSize: "11px", fontWeight: 700, color: "#fff", background: "#1d4ed8", padding: "1px 7px", borderRadius: "4px", flexShrink: 0 }}>{c.id}</span>
+                        <span style={{ fontSize: "10px", fontWeight: 700, background: s.bg, color: s.text, padding: "1px 7px", borderRadius: "999px", border: `1px solid ${s.border}`, flexShrink: 0 }}>{c.statusLabel}</span>
+                        <div style={{ marginLeft: "auto", display: "flex", gap: "5px", alignItems: "center" }}>
+                          {c.nextHearing !== "—" && (
+                            <span style={{ fontSize: "10px", fontWeight: 700, color: "#dc2626", background: "#fef2f2", padding: "1px 7px", borderRadius: "5px", border: "1px solid #fecaca" }}>
+                              📅 {c.nextHearing}
+                            </span>
+                          )}
+                          {updates.length > 0 && <span style={{ fontSize: "10px", color: "#3b82f6", fontWeight: 700, background: "#eff6ff", padding: "1px 5px", borderRadius: "6px" }}>🤖{updates.length}</span>}
+                        </div>
                       </div>
+                      {/* Row 2: full title */}
+                      <div style={{ fontSize: "12px", fontWeight: 600, color: "#0f172a", paddingLeft: "14px" }}>{c.title}</div>
                     </button>
                   );
                 })}
