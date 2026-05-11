@@ -397,22 +397,22 @@ export default function Home() {
 
           return (
           <div>
-            {/* URGENT ALERT BAR */}
-            <div style={{ background: "linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)", borderRadius: "12px", padding: "14px 20px", marginBottom: "18px", display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ fontSize: "24px" }}>⚠️</div>
+            {/* NEXT HEARING ALERT BAR */}
+            <div style={{ background: "linear-gradient(135deg, #0f2744 0%, #1e3a5f 100%)", borderRadius: "12px", padding: "16px 22px", marginBottom: "18px", display: "flex", alignItems: "center", gap: "16px", border: "1px solid #1e4a7a" }}>
+              <div style={{ fontSize: "22px" }}>📅</div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: "13px", fontWeight: 800, color: "#fff", marginBottom: "3px" }}>
+                <div style={{ fontSize: "13px", fontWeight: 800, color: "#f0c96a", marginBottom: "3px", letterSpacing: "0.3px" }}>
                   БЛИЖАЙШЕЕ ЗАСЕДАНИЕ: P.24/21 · 29.05.2026
                 </div>
-                <div style={{ fontSize: "12px", color: "#fecaca" }}>
+                <div style={{ fontSize: "12px", color: "#93c5fd" }}>
                   Привредни суд Черногории · Исключение Банченко из Capital Plus DOO · Ожидаем заключение финансового эксперта
                 </div>
               </div>
-              <div style={{ textAlign: "center", background: "rgba(255,255,255,0.15)", borderRadius: "10px", padding: "10px 18px", flexShrink: 0 }}>
-                <div style={{ fontSize: "32px", fontWeight: 900, color: "#fff", lineHeight: 1 }}>{daysLeft}</div>
-                <div style={{ fontSize: "11px", color: "#fecaca", fontWeight: 600 }}>дней</div>
+              <div style={{ textAlign: "center", background: "#f0c96a", borderRadius: "10px", padding: "10px 18px", flexShrink: 0 }}>
+                <div style={{ fontSize: "32px", fontWeight: 900, color: "#0f2744", lineHeight: 1 }}>{daysLeft}</div>
+                <div style={{ fontSize: "11px", color: "#1e3a5f", fontWeight: 700 }}>дней</div>
               </div>
-              <button onClick={() => { setTab("cases"); setOpenCase("P.24/21"); }} style={{ background: "rgba(255,255,255,0.2)", border: "1px solid rgba(255,255,255,0.4)", color: "#fff", borderRadius: "7px", padding: "8px 14px", fontSize: "12px", fontWeight: 700, cursor: "pointer" }}>
+              <button onClick={() => { setTab("cases"); setOpenCase("P.24/21"); }} style={{ background: "rgba(240,201,106,0.15)", border: "1px solid #f0c96a", color: "#f0c96a", borderRadius: "7px", padding: "8px 14px", fontSize: "12px", fontWeight: 700, cursor: "pointer" }}>
                 Открыть дело →
               </button>
             </div>
