@@ -100,41 +100,59 @@ const STATUS_CFG: Record<string, { bg: string; text: string; dot: string; border
 };
 
 const ALL_SOURCES = [
-  { cat: "⚖️ Суды — решения и расписание", color: "#1d4ed8", items: [
-    { id: "court_odluke",  name: "🔔 ПУБЛИЧНЫЕ РЕШЕНИЯ суда",  url: "https://sudovi.me/pscg/odluke/",     hi: true,  desc: "Автопоиск P.24/21, P.596/22, P.785/22 в базе решений" },
-    { id: "court_rocista", name: "Расписание заседаний",       url: "https://sudovi.me/pscg/kategorija/Qa", hi: true, desc: "Автопоиск наших дел в расписании слушаний" },
-    { id: "court_pscg",    name: "Коммерческий суд ЧГ (главная)", url: "https://sudovi.me/pscg",             hi: false, desc: "Главная страница коммерческого суда" },
-    { id: "court_ascg",    name: "Апелляционный суд ЧГ",          url: "https://sudovi.me/ascg",             hi: false, desc: "Апелляционный суд (для обжалования)" },
+  { cat: "⚖️ Суды — ваши дела напрямую", color: "#1d4ed8", items: [
+    { id: "court_odluke",  name: "📋 База решений суда", url: "https://sudovi.me/pscg/odluke/", hi: true,
+      desc: "✅ Открывается без логина · Ищите: P.24/21 · P.596/22 · P.785/22 · агент ищет автоматически" },
+    { id: "court_rocista", name: "📅 Расписание заседаний", url: "https://sudovi.me/ospg/rocista", hi: true,
+      desc: "✅ Открывается без логина · Расписание всех заседаний Коммерческого суда" },
+    { id: "court_pscg",    name: "🏛️ Коммерческий суд ЧГ", url: "https://sudovi.me/pscg", hi: false,
+      desc: "✅ Главная страница · Все разделы суда" },
+    { id: "court_ascg",    name: "🏛️ Апелляционный суд ЧГ", url: "https://sudovi.me/ascg", hi: false,
+      desc: "✅ Для обжалования решений" },
   ]},
-  { cat: "🗺️ Кадастр — участки LN 977 / LN 989", color: "#15803d", items: [
-    { id: "katastar_e",    name: "🔔 eKatastar (кадастр) — LN 977/989", url: "https://ekatastar.me",              hi: true,  desc: "Агент проверяет статус LN 977 (уч.634) и LN 989 (уч.16-20), КО Бечичи" },
-    { id: "geoportal",     name: "Геопортал Черногории",         url: "https://geoportal.co.me/geoportal/geoportal_eng.html", hi: true, desc: "Геопространственные данные · интерактивная карта кадастра" },
-    { id: "katastar_gov",  name: "Управление недвижимостью ЧГ",     url: "https://www.gov.me/en/upravazan-ekretnine", hi: false, desc: "Официальный кадастровый орган ЧГ" },
-    { id: "mpa",           name: "Мин-во простр. планирования",  url: "https://www.gov.me/mpa",             hi: false, desc: "Контроль решений UPI · строительные разрешения" },
+  { cat: "🗺️ Кадастр — ваша земля LN 977 / LN 989", color: "#15803d", items: [
+    { id: "katastar_e",    name: "🔐 eKatastar — поиск ваших участков", url: "https://www.ekatastar.me/ekatastar-web/action/elogin", hi: true,
+      desc: "🔑 ЛОГИН: KORISNIK / ПАРОЛЬ: KORISNIK → Pretraga po nosiocu prava → Capital Plus → выбрать КО Будва" },
+    { id: "geoportal",     name: "🗺️ Геопортал ЧГ — карта участка", url: "https://geoportal.co.me/Geoportal01/", hi: true,
+      desc: "✅ Без логина · Интерактивная карта · найдите Ивановичи/Бечичи · КО Будва" },
+    { id: "katastar_gov",  name: "🏢 Управление недвижимостью ЧГ", url: "http://www.uzn.me/", hi: false,
+      desc: "⚠️ Доступ только из ЧГ · Официальный орган управления кадастром" },
+    { id: "mpa",           name: "📐 Мин-во пространств. план.", url: "https://www.gov.me/mpa", hi: false,
+      desc: "✅ Контроль решений UPI-1175/25 · Строительные разрешения" },
   ]},
-  { cat: "🏢 Реестр компаний", color: "#7e22ce", items: [
-    { id: "crps_search",   name: "CRPS — Поиск компаний",    url: "http://www.pretraga.crps.me",                                  hi: true },
-    { id: "irms",          name: "IRMS — Налоговый реестр",  url: "https://irms.tax.gov.me/public/search-register/business-entities", hi: true },
-    { id: "efirma",        name: "eFirma — e-реестр",        url: "http://efirma.tax.gov.me",                                     hi: false },
+  { cat: "🏢 Capital Plus DOO — реестр и налоги", color: "#7e22ce", items: [
+    { id: "crps_search",   name: "🏢 CRPS — Capital Plus DOO", url: "http://www.pretraga.crps.me/", hi: true,
+      desc: "✅ Без логина · ПИБ для поиска: 0000002697394 · Проверить директора / учредителей" },
+    { id: "irms",          name: "📊 IRMS — Налоговый статус компании", url: "https://irms.tax.gov.me/public/search-register/business-entities", hi: true,
+      desc: "✅ Без логина · Проверить налоговый статус Capital Plus DOO · ПИБ: 0000002697394" },
+    { id: "efirma",        name: "💻 eFirma — Электронный реестр", url: "http://efirma.tax.gov.me/", hi: false,
+      desc: "✅ Альтернативный поиск по компании" },
   ]},
-  { cat: "💰 Налоги", color: "#b45309", items: [
-    { id: "tax_pu",        name: "Пореска управа ЧГ",        url: "http://www.poreskauprava.gov.me",                              hi: true },
-    { id: "tax_e",         name: "eTaxes — e-Налоги",        url: "https://etaxes.tax.gov.me",                                    hi: true },
+  { cat: "💰 Налоговая задолженность Capital Plus", color: "#b45309", items: [
+    { id: "tax_pu",        name: "💰 Пореска управа ЧГ", url: "http://www.poreskauprava.gov.me/", hi: true,
+      desc: "⚠️ Доступно только с IP Черногории · Налоговые задолженности компании" },
+    { id: "tax_e",         name: "🧾 eTaxes ЧГ", url: "https://etaxes.tax.gov.me/", hi: false,
+      desc: "⚠️ Доступно только с IP Черногории · Электронная налоговая отчётность" },
   ]},
-  { cat: "⚔️ Прокуратура", color: "#dc2626", items: [
-    { id: "prosec_main",   name: "Прокуратура ЧГ",            url: "https://tuzilastvo.me",                                        hi: true },
-    { id: "police",        name: "Полиция Черногории",       url: "https://www.upolicija.gov.me",                                 hi: true },
+  { cat: "⚔️ Прокуратура — дело Kt.96/25", color: "#dc2626", items: [
+    { id: "prosec_main",   name: "⚔️ Государственная прокуратура ЧГ", url: "https://tuzilastvo.me/", hi: true,
+      desc: "✅ Открывается · Дело Kt.96/25 против Банченко В. · Прокурор Ирена Бурич" },
+    { id: "police",        name: "👮 Полиция Черногории", url: "https://www.upolicija.gov.me/", hi: false,
+      desc: "✅ Полиция (задержала материалы по Kt.96/25) · 6 ургенций направлено" },
   ]},
-  { cat: "📈 Рынок недвижимости", color: "#0891b2", items: [
-    { id: "estitor",       name: "Estitor — Бечичи",         url: "https://estitor.com/me-en/real-estates/purpose-sale/type-land-lot/city-budva/neighbourhood-becici", hi: true,  desc: "Актуальные объявления участков · Бечичи · 2026" },
-    { id: "tranio",        name: "Tranio — Бечичи",          url: "https://tranio.com/montenegro/budva/becici/land/",             hi: true,  desc: "🛡️ Cloudflare защита · открыть вручную · €300–917/м²" },
-    { id: "properstar",    name: "Properstar — Будва",        url: "https://www.properstar.com/montenegro/budva/buy/land-plot",   hi: true,  desc: "🛡️ Cloudflare защита · открыть вручную · участки Будва" },
-    { id: "globalguide",   name: "Global Property Guide ЧГ", url: "https://www.globalpropertyguide.com/europe/montenegro/price-history", hi: false, desc: "🛡️ Cloudflare · исторические данные рынка ЧГ" },
-    { id: "investropa",    name: "Investropa — прогнозы",    url: "https://investropa.com/blogs/news/montenegro-price-forecasts", hi: false, desc: "Прогнозы роста Будва/Бечичи +10–15%/год · 2026" },
-    { id: "srbija_nek",    name: "Srbija-nekretnine (Будва)", url: "https://www.srbija-nekretnine.org/en/plots/for-sale/budva",   hi: false, desc: "Доступный агрегатор · участки Будва без блокировки" },
+  { cat: "📈 Рынок — цены Бечичи 2026", color: "#0891b2", items: [
+    { id: "estitor",       name: "📊 Estitor — участки Бечичи СЕЙЧАС", url: "https://estitor.com/me-en/real-estates/purpose-sale/type-land-lot/city-budva/neighbourhood-becici", hi: true,
+      desc: "✅ Прямая ссылка на участки Бечичи · Актуальные цены · Аналоги вашего участка" },
+    { id: "srbija_nek",    name: "🏷️ Srbija-nekretnine — Будва", url: "https://www.srbija-nekretnine.org/en/plots/for-sale/budva", hi: true,
+      desc: "✅ Без блокировки · Участки Будва · Сравнение цен" },
+    { id: "investropa",    name: "📈 Investropa — прогноз роста 2026", url: "https://investropa.com/blogs/news/montenegro-price-forecasts", hi: false,
+      desc: "✅ Прогноз: +10–15%/год · Бечичи · Будва" },
+    { id: "tranio",        name: "🌍 Tranio — Бечичи", url: "https://tranio.com/montenegro/budva/becici/land/", hi: false,
+      desc: "🛡️ Cloudflare · Открыть вручную в браузере" },
   ]},
-  { cat: "📋 Адвокат", color: "#374151", items: [
-    { id: "lawyer",        name: "Law Office Vujačić",        url: "https://lawoffice-vujacic.com",                                hi: true },
+  { cat: "📋 Адвокат — Law Office Vujačić", color: "#374151", items: [
+    { id: "lawyer",        name: "📋 Саша Вуячич — сайт конторы", url: "https://lawoffice-vujacic.com/", hi: true,
+      desc: "✅ Контакт: +382 20 229 725 · info@lawoffice-vujacic.com · Подгорица" },
   ]},
 ];
 
