@@ -252,6 +252,10 @@ export default function Home() {
   // Case agent state
   const [caseAgentStatus, setCaseAgentStatus] = useState<Record<string, {lastChecked:string|null;found:boolean;note:string}>>({});
   const [runningAgent, setRunningAgent] = useState<string | null>(null);
+  // Accordion state for monitoring sections
+  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
+  const toggleSection = (key: string) => setCollapsedSections(prev => ({ ...prev, [key]: !prev[key] }));
+  const isCollapsed = (key: string) => collapsedSections[key] ?? false;
 
   const sc = PRICE_SCENARIOS[priceIdx];
   const est = AREA_M2 * sc.perM2;
@@ -1158,150 +1162,190 @@ export default function Home() {
         {/* ════ МОНИТОРИНГ ════ */}
         {tab === "monitoring" && (
           <div>
-            {/* Header with status bar */}
-            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "16px" }}>
+
+            {/* === COMMAND HEADER === */}
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "20px" }}>
               <div>
                 <h1 style={{ fontSize: "22px", fontWeight: 800, color: "#0f172a", marginBottom: "4px" }}>Агенты мониторинга 24/7</h1>
                 <p style={{ fontSize: "13px", color: "#475569" }}>
-                  Агенты автоматически проверяют все источники каждые 30 минут · Извлекают данные · Фиксируют изменения
+                  {totalChecked > 0
+                    ? `Последняя проверка: ${fmtDate(monState?.updatedAt || null)} · ${okSources} из ${FLAT_SOURCES.length} источников онлайн`
+                    : "Нажмите «Запустить» — агенты проверят все источники и обновят статусы"}
                 </p>
               </div>
               <button onClick={checkAll} disabled={checkingAll} style={{
                 fontSize: "13px", fontWeight: 700, color: "#fff",
-                background: checkingAll ? "#94a3b8" : "#1d4ed8",
-                border: "none", padding: "10px 20px", borderRadius: "9px",
-                cursor: checkingAll ? "not-allowed" : "pointer", whiteSpace: "nowrap",
-                display: "flex", alignItems: "center", gap: "7px", flexShrink: 0,
+                background: checkingAll ? "#94a3b8" : "#0f2744",
+                border: "none", padding: "11px 22px", borderRadius: "9px",
+                cursor: checkingAll ? "not-allowed" : "pointer",
+                display: "flex", alignItems: "center", gap: "8px", flexShrink: 0,
+                boxShadow: checkingAll ? "none" : "0 2px 8px rgba(15,39,68,0.3)",
               }}>
-                {checkingAll
-                  ? <><span style={{ display: "inline-block", animation: "spin 1s linear infinite" }}>⟳</span> Проверяю {FLAT_SOURCES.length} источников…</>
-                  : "⟳ Запустить проверку всех агентов"}
+                <span style={{ display: "inline-block", animation: checkingAll ? "spin 1s linear infinite" : "none" }}>⟳</span>
+                {checkingAll ? `Проверяю ${FLAT_SOURCES.length} источников…` : "Запустить всех агентов"}
               </button>
             </div>
 
-            {/* Auto-check status bar */}
-            <div style={{ display: "flex", alignItems: "center", gap: "16px", background: "#fff", border: "1px solid #e2e8f0", borderRadius: "10px", padding: "12px 18px", marginBottom: "16px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "7px" }}>
-                <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: totalChecked > 0 ? "#22c55e" : "#94a3b8", boxShadow: totalChecked > 0 ? "0 0 6px #22c55e80" : "none" }} />
-                <span style={{ fontSize: "13px", fontWeight: 700, color: "#0f172a" }}>
-                  {totalChecked > 0 ? `${okSources} из ${FLAT_SOURCES.length} источников онлайн` : "Агенты не запущены"}
-                </span>
-              </div>
-              {monState?.updatedAt && (
-                <span style={{ fontSize: "12px", color: "#64748b" }}>
-                  Последняя проверка: <strong style={{ color: "#374151" }}>{fmtDate(monState.updatedAt)}</strong>
-                </span>
-              )}
-              <span style={{ fontSize: "12px", color: "#94a3b8", marginLeft: "auto" }}>
-                🔄 Автоматически каждые 30 мин.
-              </span>
-            </div>
-
-            {/* Source cards with extracted data */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-              {ALL_SOURCES.map(cat => (
-                <Card key={cat.cat}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "14px" }}>
-                    <h2 style={{ fontSize: "14px", fontWeight: 700, color: cat.color, margin: 0 }}>{cat.cat}</h2>
-                    <div style={{ flex: 1, height: "1px", background: "#f1f5f9" }} />
+            {/* === SUMMARY KPI ROW === */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: "10px", marginBottom: "20px" }}>
+              {[
+                { label: "Онлайн",          val: Object.values(monState?.sources||{}).filter(s=>s.status==="ok").length,
+                  total: FLAT_SOURCES.length, color: "#15803d", bg: "#f0fdf4", icon: "✅" },
+                { label: "Медленно",         val: Object.values(monState?.sources||{}).filter(s=>s.status==="slow"&&!s.extracted?.botBlocked).length,
+                  total: null, color: "#d97706", bg: "#fffbeb", icon: "⚠️" },
+                { label: "Бот-защита",       val: Object.values(monState?.sources||{}).filter(s=>s.extracted?.botBlocked===1).length,
+                  total: null, color: "#7e22ce", bg: "#faf5ff", icon: "🛡️" },
+                { label: "Недоступны",       val: Object.values(monState?.sources||{}).filter(s=>s.status==="error"&&!s.extracted?.botBlocked).length,
+                  total: null, color: "#dc2626", bg: "#fef2f2", icon: "❌" },
+                { label: "Не проверено",     val: FLAT_SOURCES.filter(s=>!monState?.sources?.[s.id]?.lastChecked).length,
+                  total: null, color: "#64748b", bg: "#f8fafc", icon: "⏳" },
+              ].map(k => (
+                <div key={k.label} style={{ background: k.bg, border: `1px solid ${k.color}30`, borderRadius: "10px", padding: "12px 14px", textAlign: "center" }}>
+                  <div style={{ fontSize: "22px", fontWeight: 800, color: k.color }}>
+                    {k.val}{k.total ? <span style={{ fontSize: "13px", color: "#94a3b8" }}>/{k.total}</span> : ""}
                   </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                    {cat.items.map((item: { id: string; name: string; url: string; hi: boolean; desc?: string }) => {
-                      const st = monState?.sources[item.id];
-                      const isChecking = checking[item.id];
-                      const isBotBlocked = st?.extracted?.botBlocked === 1 || (item.desc?.includes("🛡️") && !st?.lastChecked);
-                      const bgColor = isBotBlocked ? "#fffbeb" : st?.status === "ok" ? "#f0fdf4" : st?.status === "error" ? "#fef2f2" : st?.status === "slow" ? "#fffbeb" : "#f8fafc";
-                      return (
-                        <div key={item.id} style={{
-                          background: bgColor,
-                          border: `1px solid ${st?.changed ? "#f59e0b" : "#e2e8f0"}`,
-                          borderLeft: item.hi ? `4px solid ${cat.color}` : "1px solid #e2e8f0",
-                          borderRadius: "9px", padding: "12px 14px",
-                        }}>
-                          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "6px" }}>
-                            {/* Status dot */}
-                            <div style={{ width: "8px", height: "8px", borderRadius: "50%", flexShrink: 0,
-                              background: st?.status === "ok" ? "#22c55e" : st?.status === "error" ? "#ef4444" : st?.status === "slow" ? "#f59e0b" : "#94a3b8",
-                              boxShadow: st?.status === "ok" ? "0 0 5px #22c55e60" : "none",
-                            }} />
-
-                            {/* Name + link */}
-                            <a href={item.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: "13px", fontWeight: 700, color: "#0f172a", textDecoration: "none", flex: 1 }}>
-                              {item.name} <span style={{ color: cat.color, fontSize: "11px" }}>↗</span>
-                            </a>
-
-                            {/* Change badge */}
-                            {st?.changed && (
-                              <span style={{ fontSize: "10px", fontWeight: 700, background: "#fef3c7", color: "#92400e", padding: "2px 7px", borderRadius: "999px", border: "1px solid #fde68a" }}>
-                                🔔 ИЗМЕНЕНИЕ
-                              </span>
-                            )}
-
-                            {/* Check button */}
-                            <button onClick={() => checkSource(item.id, item.url)} disabled={isChecking} style={{
-                              fontSize: "11px", fontWeight: 700, flexShrink: 0,
-                              color: isChecking ? "#94a3b8" : "#fff",
-                              background: isChecking ? "#f1f5f9" : cat.color,
-                              border: "none", borderRadius: "5px", padding: "4px 10px", cursor: "pointer",
-                            }}>
-                              {isChecking ? "⟳ …" : "Проверить"}
-                            </button>
-                          </div>
-
-                          {/* Agent result / desc */}
-                          {st?.note ? (
-                            <div style={{ fontSize: "12px", color: isBotBlocked ? "#92400e" : st.status === "error" ? "#dc2626" : "#374151", marginBottom: "4px", fontWeight: 500 }}>
-                              {st.note}
-                            </div>
-                          ) : item.desc ? (
-                            <div style={{ fontSize: "12px", color: "#475569", marginBottom: "4px" }}>{item.desc}</div>
-                          ) : (
-                            <div style={{ fontSize: "12px", color: "#94a3b8", marginBottom: "4px" }}>Нажмите «Проверить» для запуска агента</div>
-                          )}
-
-                          {/* Timestamp */}
-                          <div style={{ fontSize: "11px", color: "#64748b" }}>
-                            {st?.lastChecked
-                              ? <>🕐 Последняя проверка агента: <strong>{fmtDate(st.lastChecked)}</strong> ({timeAgo(st.lastChecked)})</>
-                              : "⏳ Нажмите «Проверить» или запустите все агенты"}
-                          </div>
-
-                          {/* Extracted data for special sources */}
-                          {st?.extracted && st.status === "ok" && (() => {
-                            const ex = st.extracted;
-                            const parts: string[] = [];
-                            if (ex.ourCasesFound)  parts.push(`⚖️ Найдены дела: ${ex.ourCasesFound}`);
-                            if (ex.listingCount)   parts.push(`📋 Объявлений: ${ex.listingCount}`);
-                            if (ex.priceMin && ex.priceMax) parts.push(`💶 Цены: €${((ex.priceMin as number)/1000).toFixed(0)}K – €${((ex.priceMax as number)/1000).toFixed(0)}K`);
-                            if (ex.searchAvailable === 1) parts.push("🔍 Поиск по ПИБ доступен");
-                            if (!parts.length) return null;
-                            return (
-                              <div style={{ marginTop: "6px", display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                                {parts.map((p, i) => (
-                                  <span key={i} style={{ fontSize: "11px", fontWeight: 600, background: "#fff", border: `1px solid ${cat.color}30`, color: cat.color, padding: "2px 8px", borderRadius: "5px" }}>
-                                    {p}
-                                  </span>
-                                ))}
-                              </div>
-                            );
-                          })()}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </Card>
+                  <div style={{ fontSize: "11px", color: "#475569", marginTop: "2px" }}>{k.icon} {k.label}</div>
+                </div>
               ))}
             </div>
 
-            {/* Info block */}
-            <div style={{ marginTop: "16px", background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "10px", padding: "14px 18px" }}>
-              <div style={{ fontSize: "13px", fontWeight: 700, color: "#1d4ed8", marginBottom: "6px" }}>ℹ️ Как работают агенты</div>
-              <div style={{ fontSize: "12px", color: "#374151", lineHeight: "1.7" }}>
-                <strong>✅ Что делают агенты автоматически:</strong> Проверяют все официальные источники каждые 30 мин · Ищут ваши дела (P.24/21, P.596/22) в базе ПУБЛИЧНЫХ РЕШЕНИЙ суда · Проверяют статус кадастра (eKatastar) · Извлекают цены с Estitor · Фиксируют изменения с прошлой проверки<br/>
-                <strong>🛡️ Почему некоторые сайты показывают «защита бота»:</strong> Tranio, Properstar, Global Property Guide используют Cloudflare Anti-Bot — они блокируют любые серверные запросы. Это НЕ ошибка — это их политика. Эти сайты нужно открывать вручную (клик ↗). Данные известны: Бечичи 2026 = €300–917/м².<br/>
-                <strong>📎 Для обновления данных по делам:</strong> Загружайте PDF-отчёты адвоката в разделе «Суд. дела» — агент автоматически извлечёт даты, номера дел и ключевые факты.
+            {/* === CASE AGENTS (PRIORITY 1) === */}
+            <Card style={{ marginBottom: "16px", borderLeft: "4px solid #1d4ed8" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+                <div>
+                  <div style={{ fontSize: "13px", fontWeight: 700, color: "#1d4ed8", textTransform: "uppercase", letterSpacing: "0.8px" }}>⚖️ Агенты судебных дел</div>
+                  <div style={{ fontSize: "11px", color: "#64748b", marginTop: "2px" }}>Автоматический поиск по номерам дел в базе решений Коммерческого суда ЧГ</div>
+                </div>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px,1fr))", gap: "8px" }}>
+                {CASES.map(c => {
+                  const agentKey = `case_${c.id.replace(/[./]/g,"_")}`;
+                  const agentSrc = monState?.sources?.[agentKey];
+                  const st = STATUS_CFG[c.status];
+                  const isRunning = runningAgent === c.id;
+                  return (
+                    <div key={c.id} style={{
+                      background: agentSrc?.status === "ok" ? "#f0fdf4" : "#f8fafc",
+                      border: `1px solid ${agentSrc?.status === "ok" ? "#bbf7d0" : "#e2e8f0"}`,
+                      borderRadius: "9px", padding: "12px 14px",
+                    }}>
+                      {/* Case header */}
+                      <div style={{ display: "flex", alignItems: "center", gap: "7px", marginBottom: "6px" }}>
+                        <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: st.dot, display: "inline-block", flexShrink: 0 }} />
+                        <span style={{ fontSize: "11px", fontWeight: 700, color: "#fff", background: "#1d4ed8", padding: "1px 7px", borderRadius: "4px" }}>{c.id}</span>
+                        <span style={{ fontSize: "10px", fontWeight: 700, background: st.bg, color: st.text, padding: "1px 7px", borderRadius: "999px", border: `1px solid ${st.border}` }}>{c.statusLabel}</span>
+                        {c.nextHearing !== "—" && (
+                          <span style={{ fontSize: "10px", color: "#dc2626", fontWeight: 700, marginLeft: "auto" }}>📅 {c.nextHearing}</span>
+                        )}
+                      </div>
+                      <div style={{ fontSize: "12px", fontWeight: 600, color: "#0f172a", marginBottom: "6px" }}>{c.title}</div>
+                      {/* Agent status */}
+                      <div style={{ fontSize: "11px", color: agentSrc?.status === "ok" ? "#15803d" : "#64748b", marginBottom: "6px" }}>
+                        {agentSrc?.note || "Агент ещё не запускался"}
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <span style={{ fontSize: "10px", color: "#94a3b8" }}>
+                          {agentSrc?.lastChecked ? `🕐 ${fmtDate(agentSrc.lastChecked)}` : "⏳ Ожидает"}
+                        </span>
+                        <button onClick={() => runCaseAgent(c.id)} disabled={isRunning} style={{
+                          fontSize: "10px", fontWeight: 700, color: "#fff",
+                          background: isRunning ? "#94a3b8" : "#0f2744",
+                          border: "none", padding: "4px 10px", borderRadius: "5px", cursor: "pointer",
+                        }}>
+                          {isRunning ? "⟳ …" : "🤖 Проверить"}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </Card>
+
+            {/* === SOURCES GRID — by category === */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px", marginBottom: "16px" }}>
+              {ALL_SOURCES.map(cat => {
+                const catKey = `mon_${cat.cat}`;
+                const collapsed = isCollapsed(catKey);
+                const onlineCount = cat.items.filter(i => monState?.sources?.[i.id]?.status === "ok").length;
+                return (
+                <Card key={cat.cat} style={{ borderTop: `3px solid ${cat.color}`, padding: "14px 16px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", marginBottom: collapsed ? 0 : "12px" }}
+                    onClick={() => toggleSection(catKey)}>
+                    <h3 style={{ fontSize: "12px", fontWeight: 700, color: cat.color, textTransform: "uppercase", letterSpacing: "0.8px", margin: 0, flex: 1 }}>
+                      {cat.cat}
+                    </h3>
+                    <span style={{ fontSize: "10px", fontWeight: 700, color: onlineCount > 0 ? "#15803d" : "#64748b", background: onlineCount > 0 ? "#f0fdf4" : "#f8fafc", padding: "2px 7px", borderRadius: "999px", border: "1px solid #e2e8f0" }}>
+                      {onlineCount}/{cat.items.length} онлайн
+                    </span>
+                    <span style={{ fontSize: "14px", color: cat.color, transform: collapsed ? "rotate(-90deg)" : "rotate(0)", transition: "transform 0.2s", display: "inline-block" }}>▾</span>
+                  </div>
+                  {!collapsed && <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                    {cat.items.map((item: {id:string;name:string;url:string;hi:boolean;desc?:string}) => {
+                      const st = monState?.sources?.[item.id];
+                      const isBotBlocked = st?.extracted?.botBlocked === 1;
+                      const isChecking = checking[item.id];
+                      const statusIcon = !st?.lastChecked ? "⏳"
+                        : isBotBlocked ? "🛡️"
+                        : st.status === "ok" ? "✅"
+                        : st.status === "error" ? "❌"
+                        : "⚠️";
+                      const statusColor = !st?.lastChecked ? "#94a3b8"
+                        : isBotBlocked ? "#d97706"
+                        : st.status === "ok" ? "#15803d"
+                        : st.status === "error" ? "#dc2626"
+                        : "#d97706";
+                      return (
+                        <div key={item.id} style={{
+                          display: "flex", alignItems: "center", gap: "8px",
+                          padding: "7px 10px", borderRadius: "7px",
+                          background: item.hi ? "#f8fafc" : "#fafafa",
+                          border: `1px solid ${item.hi ? "#e2e8f0" : "#f1f5f9"}`,
+                          borderLeft: item.hi ? `3px solid ${cat.color}` : `1px solid #f1f5f9`,
+                        }}>
+                          <span style={{ fontSize: "13px", flexShrink: 0 }}>{statusIcon}</span>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <a href={item.url} target="_blank" rel="noopener noreferrer"
+                              style={{ fontSize: "12px", fontWeight: 600, color: "#0f172a", textDecoration: "none", display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                              {item.name.replace(/^[🔔📋🏢📊💻💰🧾⚔️👮📊🌍🏷️📈🗺️🔐]/u, "").trim()} ↗
+                            </a>
+                            <span style={{ fontSize: "10px", color: statusColor, fontWeight: 600 }}>
+                              {st?.lastChecked ? `${timeAgo(st.lastChecked)}` : "не проверялось"}
+                              {st?.note && st.status !== "error" && !isBotBlocked ? ` · ${st.note.slice(0,50)}` : ""}
+                            </span>
+                          </div>
+                          <button onClick={() => checkSource(item.id, item.url)} disabled={isChecking} style={{
+                            fontSize: "10px", fontWeight: 700, flexShrink: 0,
+                            color: isChecking ? "#94a3b8" : "#fff",
+                            background: isChecking ? "#f1f5f9" : cat.color,
+                            border: "none", borderRadius: "5px", padding: "3px 8px", cursor: "pointer",
+                          }}>
+                            {isChecking ? "⟳" : "↺"}
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>}
+                </Card>
+                );
+              })}
+            </div>
+
+            {/* === SCHEDULE CARD === */}
+            <div style={{ background: "#0f2744", borderRadius: "12px", padding: "16px 22px", display: "flex", alignItems: "center", gap: "20px" }}>
+              <div style={{ fontSize: "24px" }}>🕐</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: "13px", fontWeight: 700, color: "#f0c96a", marginBottom: "4px" }}>Расписание автоматических проверок</div>
+                <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.7)" }}>
+                  09:00 Братислава — Vercel Cron (ежедневно) &nbsp;·&nbsp;
+                  20:00 Братислава — cron-job.org job #7589398 (ежедневно)
+                </div>
+              </div>
+              <div style={{ textAlign: "right", flexShrink: 0 }}>
+                <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)", marginBottom: "2px" }}>Следующий запуск</div>
+                <div style={{ fontSize: "13px", fontWeight: 700, color: "#fff" }}>Сегодня 20:00</div>
               </div>
             </div>
+
           </div>
         )}
 
