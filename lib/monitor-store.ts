@@ -1,7 +1,10 @@
 import fs from "fs";
 import path from "path";
 
-const FILE = path.join(process.cwd(), "monitor-state.json");
+// On Vercel serverless: use /tmp (writable). Locally: use project root.
+const FILE = process.env.VERCEL
+  ? "/tmp/monitor-state.json"
+  : path.join(process.cwd(), "monitor-state.json");
 
 export interface SourceStatus {
   lastChecked: string | null;
