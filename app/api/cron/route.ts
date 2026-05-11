@@ -11,8 +11,15 @@ import { NextResponse } from "next/server";
 //   Schedule: 18:00 UTC daily
 export async function GET(req: Request) {
   const auth = req.headers.get("authorization");
-  if (process.env.CRON_SECRET && auth !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const url = new URL(req.url);
+  const secret = url.searchParams.get("secret");
+  // Accept either Authorization header OR ?secret= query param (for cron-job.org)
+  if (process.env.CRON_SECRET) {
+    const headerOk = auth === `Bearer ${process.env.CRON_SECRET}`;
+    const queryOk  = secret === process.env.CRON_SECRET;
+    if (!headerOk && !queryOk) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
   }
 
   const base = process.env.VERCEL_URL
