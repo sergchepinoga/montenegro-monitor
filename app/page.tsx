@@ -387,72 +387,189 @@ export default function Home() {
 
       <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "24px 28px 60px" }}>
 
-        {/* ════ ОБЗОР ════ */}
-        {tab === "overview" && (
-          <div>
-            <h1 style={{ fontSize: "22px", fontWeight: 800, color: "#0f172a", marginBottom: "4px" }}>Бечичи, Будва — Черногория</h1>
-            <p style={{ fontSize: "13px", color: "#475569", marginBottom: "22px" }}>Capital Plus DOO · ПИБ 0000002697394 · Ивановичи, над отелем Splendid 5★ · 800 м от моря</p>
+        {/* ════ ОБЗОР — ГЛАВНЫЙ ДАШБОРД ════ */}
+        {tab === "overview" && (() => {
+          // Countdown to next hearing
+          const nextHearingDate = new Date("2026-05-29");
+          const today = new Date("2026-05-11");
+          const daysLeft = Math.ceil((nextHearingDate.getTime() - today.getTime()) / 86400000);
+          const monOk = monState?.updatedAt;
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "12px", marginBottom: "20px" }}>
+          return (
+          <div>
+            {/* URGENT ALERT BAR */}
+            <div style={{ background: "linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)", borderRadius: "12px", padding: "14px 20px", marginBottom: "18px", display: "flex", alignItems: "center", gap: "16px" }}>
+              <div style={{ fontSize: "24px" }}>⚠️</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: "13px", fontWeight: 800, color: "#fff", marginBottom: "3px" }}>
+                  БЛИЖАЙШЕЕ ЗАСЕДАНИЕ: P.24/21 · 29.05.2026
+                </div>
+                <div style={{ fontSize: "12px", color: "#fecaca" }}>
+                  Привредни суд Черногории · Исключение Банченко из Capital Plus DOO · Ожидаем заключение финансового эксперта
+                </div>
+              </div>
+              <div style={{ textAlign: "center", background: "rgba(255,255,255,0.15)", borderRadius: "10px", padding: "10px 18px", flexShrink: 0 }}>
+                <div style={{ fontSize: "32px", fontWeight: 900, color: "#fff", lineHeight: 1 }}>{daysLeft}</div>
+                <div style={{ fontSize: "11px", color: "#fecaca", fontWeight: 600 }}>дней</div>
+              </div>
+              <button onClick={() => { setTab("cases"); setOpenCase("P.24/21"); }} style={{ background: "rgba(255,255,255,0.2)", border: "1px solid rgba(255,255,255,0.4)", color: "#fff", borderRadius: "7px", padding: "8px 14px", fontSize: "12px", fontWeight: 700, cursor: "pointer" }}>
+                Открыть дело →
+              </button>
+            </div>
+
+            {/* TOP KPIs */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "12px", marginBottom: "16px" }}>
               {[
-                { icon: "📍", val: "8 667 м²",    label: "Площадь актива",      sub: "LN 977 (6 039 м²) + LN 989 (2 628 м²)", accent: "#1d4ed8", tab: "asset" },
-                { icon: "💶", val: `€${(est/1e6).toFixed(2)}M`, label: "Оценка (реалист.)", sub: `${sc.perM2} €/м² · ${sc.note}`, accent: "#15803d", tab: "value" },
-                { icon: "📊", val: `+€${(growth/1e3).toFixed(0)}K`, label: "Прирост к 2021", sub: `244 → ${sc.perM2} €/м² · +${Math.round((sc.perM2/244-1)*100)}%`, accent: "#7e22ce", tab: "value" },
-                { icon: "⚖️", val: "5 дел",        label: "Судебных дел",        sub: "Гражданских: 3 · Уголовных: 1 · Кадастр: 1", accent: "#d97706", tab: "cases" },
-                { icon: "📅", val: "29.05.2026",   label: "Ближайшее заседание", sub: "P.24/21 · Привредни суд ЧГ", accent: "#dc2626", tab: "cases" },
-                { icon: "🔍", val: `${okSources || "—"}/${FLAT_SOURCES.length}`, label: "Источников онлайн", sub: totalChecked ? `Проверено: ${fmtDate(monState?.updatedAt || null)}` : "Нажмите «Мониторинг» для проверки", accent: "#0891b2", tab: "monitoring" },
+                { icon: "💶", val: `€${(est/1e6).toFixed(2)}M`, label: "Стоимость актива", sub: `${sc.perM2} €/м² · реалист. 2026`, accent: "#15803d", tab: "value" },
+                { icon: "📈", val: `+${Math.round((sc.perM2/244-1)*100)}%`, label: "Рост с 2021",   sub: `€2.11M → €${(est/1e6).toFixed(2)}M`, accent: "#7e22ce", tab: "value" },
+                { icon: "📍", val: "8 667 м²",  label: "Площадь",  sub: "LN 977 + LN 989 · Бечичи", accent: "#1d4ed8", tab: "asset" },
+                { icon: "🔍", val: totalChecked > 0 ? `${okSources}/${FLAT_SOURCES.length}` : "—", label: "Агенты онлайн", sub: monOk ? `Проверено ${fmtDate(monOk)}` : "Не проверялось", accent: "#0891b2", tab: "monitoring" },
               ].map(k => (
-                <button key={k.label} onClick={() => setTab(k.tab)} style={{ background: "#fff", borderRadius: "12px", padding: "16px 18px", border: "1px solid #e2e8f0", borderLeft: `4px solid ${k.accent}`, boxShadow: "0 1px 3px rgba(0,0,0,0.04)", textAlign: "left", cursor: "pointer" }}>
-                  <div style={{ fontSize: "20px", marginBottom: "7px" }}>{k.icon}</div>
-                  <div style={{ fontSize: "20px", fontWeight: 800, color: "#0f172a", marginBottom: "2px" }}>{k.val}</div>
-                  <div style={{ fontSize: "12px", fontWeight: 700, color: "#374151", marginBottom: "2px" }}>{k.label}</div>
-                  <div style={{ fontSize: "11px", color: "#64748b" }}>{k.sub}</div>
-                  <div style={{ fontSize: "11px", color: k.accent, marginTop: "7px", fontWeight: 600 }}>Открыть раздел →</div>
+                <button key={k.label} onClick={() => setTab(k.tab)} style={{ background: "#fff", borderRadius: "12px", padding: "14px 16px", border: "1px solid #e2e8f0", borderLeft: `4px solid ${k.accent}`, boxShadow: "0 1px 3px rgba(0,0,0,0.04)", textAlign: "left", cursor: "pointer" }}>
+                  <div style={{ fontSize: "18px", marginBottom: "6px" }}>{k.icon}</div>
+                  <div style={{ fontSize: "19px", fontWeight: 800, color: "#0f172a", marginBottom: "2px" }}>{k.val}</div>
+                  <div style={{ fontSize: "11px", fontWeight: 700, color: "#374151", marginBottom: "2px" }}>{k.label}</div>
+                  <div style={{ fontSize: "10px", color: "#64748b" }}>{k.sub}</div>
                 </button>
               ))}
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
-              <Card>
-                <Sec>Последние события</Sec>
-                {[
-                  { date: "07.04.2026", text: "Kt.96/25: полиция не предоставила материалы, направлено 6 ургенций", color: "#dc2626" },
-                  { date: "30.04.2026", text: "P.24/21: заседание прошло, ожидаем заключение финансового эксперта", color: "#1d4ed8" },
-                  { date: "24.03.2026", text: "P.596/22: судья «передача незаконна», планирует направить прокурору", color: "#1d4ed8" },
-                  { date: "18.06.2025", text: "Министерство ОТМЕНИЛО решение UPI-1175/25 (передача → Crnovršanin)", color: "#15803d" },
-                ].map((e, i) => (
-                  <div key={i} style={{ display: "flex", gap: "12px", padding: "9px 0", borderBottom: i < 3 ? "1px solid #f1f5f9" : "none" }}>
-                    <span style={{ fontSize: "11px", color: "#475569", whiteSpace: "nowrap", paddingTop: "2px", minWidth: "78px" }}>{e.date}</span>
-                    <span style={{ fontSize: "13px", color: "#1e293b", lineHeight: "1.4", borderLeft: `3px solid ${e.color}`, paddingLeft: "10px" }}>{e.text}</span>
-                  </div>
-                ))}
-              </Card>
+            {/* MAIN DASHBOARD GRID */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px", marginBottom: "14px" }}>
 
+              {/* Судебные дела — мини дашборд */}
               <Card>
-                <Sec>Статус судебных дел</Sec>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+                  <Sec>⚖️ Судебные дела</Sec>
+                  <button onClick={() => setTab("cases")} style={{ fontSize: "11px", color: "#1d4ed8", background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}>Все дела →</button>
+                </div>
                 {CASES.map(c => {
                   const s = STATUS_CFG[c.status];
                   const updates = monState?.caseUpdates[c.id] || [];
                   return (
-                    <button key={c.id} onClick={() => { setTab("cases"); setOpenCase(c.id); }} style={{ width: "100%", display: "flex", alignItems: "center", gap: "8px", padding: "8px 0", borderBottom: "1px solid #f1f5f9", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}>
-                      <span style={{ width: "7px", height: "7px", borderRadius: "50%", background: s.dot, flexShrink: 0, display: "inline-block" }} />
-                      <span style={{ fontSize: "12px", fontWeight: 700, color: "#0f172a" }}>{c.id}</span>
-                      <span style={{ fontSize: "11px", color: "#475569", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.title.slice(0, 38)}…</span>
-                      {updates.length > 0 && <span style={{ fontSize: "10px", color: "#3b82f6", fontWeight: 700, background: "#eff6ff", padding: "1px 6px", borderRadius: "8px", flexShrink: 0 }}>{updates.length} обн.</span>}
+                    <button key={c.id} onClick={() => { setTab("cases"); setOpenCase(c.id); }}
+                      style={{ width: "100%", display: "flex", alignItems: "center", gap: "8px", padding: "8px 10px", marginBottom: "4px", borderRadius: "7px", background: "#f8fafc", border: "1px solid #f1f5f9", cursor: "pointer", textAlign: "left" }}>
+                      <span style={{ width: "7px", height: "7px", borderRadius: "50%", background: s.dot, flexShrink: 0 }} />
+                      <span style={{ fontSize: "11px", fontWeight: 700, color: "#fff", background: "#1d4ed8", padding: "1px 6px", borderRadius: "4px", flexShrink: 0 }}>{c.id}</span>
+                      <span style={{ fontSize: "11px", color: "#374151", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.title.slice(0, 32)}…</span>
+                      <div style={{ display: "flex", gap: "4px", alignItems: "center", flexShrink: 0 }}>
+                        {c.nextHearing !== "—" && <span style={{ fontSize: "10px", color: "#dc2626", fontWeight: 700 }}>📅{c.nextHearing}</span>}
+                        {updates.length > 0 && <span style={{ fontSize: "10px", color: "#3b82f6", fontWeight: 700, background: "#eff6ff", padding: "1px 5px", borderRadius: "6px" }}>+{updates.length}</span>}
+                      </div>
                     </button>
                   );
                 })}
-                <button onClick={() => setTab("cases")} style={{ marginTop: "10px", fontSize: "12px", color: "#1d4ed8", background: "none", border: "none", cursor: "pointer", fontWeight: 600, padding: 0 }}>Открыть все дела →</button>
+              </Card>
+
+              {/* Последние события + следующие шаги */}
+              <Card>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+                  <Sec>📋 Последние события</Sec>
+                  <span style={{ fontSize: "10px", color: "#94a3b8" }}>11.05.2026</span>
+                </div>
+                {[
+                  { date: "30.04.2026", text: "P.24/21: заседание прошло, ожидаем финансового эксперта", color: "#1d4ed8", urgent: true },
+                  { date: "07.04.2026", text: "Kt.96/25: полиция не предоставила материалы, 6 ургенций", color: "#dc2626", urgent: true },
+                  { date: "24.03.2026", text: "P.596/22: судья «передача незаконна»", color: "#1d4ed8", urgent: false },
+                  { date: "18.06.2025", text: "Мин-во ОТМЕНИЛО решение UPI-1175/25 ✅", color: "#15803d", urgent: false },
+                ].map((e, i) => (
+                  <div key={i} style={{ display: "flex", gap: "10px", padding: "7px 0", borderBottom: i < 3 ? "1px solid #f1f5f9" : "none", alignItems: "flex-start" }}>
+                    <span style={{ fontSize: "10px", color: e.urgent ? "#dc2626" : "#64748b", whiteSpace: "nowrap", paddingTop: "2px", minWidth: "68px", fontWeight: e.urgent ? 700 : 400 }}>{e.date}</span>
+                    <span style={{ fontSize: "12px", color: "#1e293b", lineHeight: "1.4", borderLeft: `2px solid ${e.color}`, paddingLeft: "8px" }}>{e.text}</span>
+                  </div>
+                ))}
+
+                {/* Следующие шаги */}
+                <div style={{ marginTop: "10px", padding: "10px 12px", background: "#f0fdf4", borderRadius: "7px", border: "1px solid #bbf7d0" }}>
+                  <div style={{ fontSize: "10px", fontWeight: 700, color: "#15803d", textTransform: "uppercase", letterSpacing: "0.4px", marginBottom: "6px" }}>Следующие действия</div>
+                  {[
+                    "29.05.2026 — Заседание P.24/21 (Привредни суд)",
+                    "Уточнить у адвоката статус P.596/22 (08.05.2026)",
+                    "Запросить обновление по Kt.96/25 (полиция)",
+                  ].map((step, i) => (
+                    <div key={i} style={{ fontSize: "11px", color: "#374151", padding: "3px 0", display: "flex", gap: "6px" }}>
+                      <span style={{ color: "#15803d", flexShrink: 0 }}>→</span>
+                      {step}
+                    </div>
+                  ))}
+                </div>
               </Card>
             </div>
+
+            {/* BOTTOM ROW: Asset + Value + Monitoring summary */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
+              {/* Актив */}
+              <button onClick={() => setTab("asset")} style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "12px", padding: "16px", textAlign: "left", cursor: "pointer", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+                <div style={{ fontSize: "11px", fontWeight: 700, color: "#1d4ed8", textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: "10px" }}>🏞️ Актив</div>
+                {[["LN 977", "6 039 м²", "#15803d"], ["LN 989", "2 628 м²", "#15803d"], ["Итого", "8 667 м²", "#0f172a"], ["Застройка", "≤13 867 м²", "#7e22ce"]].map(([k,v,c]) => (
+                  <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "3px 0", borderBottom: "1px solid #f8fafc" }}>
+                    <span style={{ fontSize: "11px", color: "#64748b" }}>{k}</span>
+                    <span style={{ fontSize: "11px", fontWeight: 700, color: c }}>{v}</span>
+                  </div>
+                ))}
+                <div style={{ fontSize: "11px", color: "#1d4ed8", marginTop: "8px", fontWeight: 600 }}>Открыть раздел →</div>
+              </button>
+
+              {/* Стоимость */}
+              <button onClick={() => setTab("value")} style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "12px", padding: "16px", textAlign: "left", cursor: "pointer", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+                <div style={{ fontSize: "11px", fontWeight: 700, color: "#15803d", textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: "10px" }}>💶 Стоимость</div>
+                {[
+                  ["Консервативно", `€${(8667*300/1e6).toFixed(2)}M`, "#64748b"],
+                  ["Реалистично",   `€${(est/1e6).toFixed(2)}M`,     "#15803d"],
+                  ["Оптимально",    `€${(8667*500/1e6).toFixed(2)}M`, "#7e22ce"],
+                  ["Тренд 2026",    "+10–15%/год",                     "#d97706"],
+                ].map(([k,v,c]) => (
+                  <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "3px 0", borderBottom: "1px solid #f8fafc" }}>
+                    <span style={{ fontSize: "11px", color: "#64748b" }}>{k}</span>
+                    <span style={{ fontSize: "11px", fontWeight: 700, color: c }}>{v}</span>
+                  </div>
+                ))}
+                <div style={{ fontSize: "11px", color: "#15803d", marginTop: "8px", fontWeight: 600 }}>Открыть раздел →</div>
+              </button>
+
+              {/* Мониторинг */}
+              <button onClick={() => setTab("monitoring")} style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "12px", padding: "16px", textAlign: "left", cursor: "pointer", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+                <div style={{ fontSize: "11px", fontWeight: 700, color: "#0891b2", textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: "10px" }}>🔍 Агенты</div>
+                {[
+                  ["Суды", monState?.sources?.court_odluke?.status === "ok" ? "✅ Онлайн" : "⏳ Не проверено", monState?.sources?.court_odluke?.status === "ok" ? "#15803d" : "#64748b"],
+                  ["Кадастр", monState?.sources?.katastar_e?.status === "ok" ? "✅ Онлайн" : "⏳ Не проверено", monState?.sources?.katastar_e?.status === "ok" ? "#15803d" : "#64748b"],
+                  ["CRPS", monState?.sources?.crps_search?.status === "ok" ? "✅ Онлайн" : "⏳ Не проверено", monState?.sources?.crps_search?.status === "ok" ? "#15803d" : "#64748b"],
+                  ["Рынок", monState?.sources?.estitor?.status === "ok" ? "✅ Онлайн" : "⏳ Не проверено", monState?.sources?.estitor?.status === "ok" ? "#15803d" : "#64748b"],
+                ].map(([k,v,c]) => (
+                  <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "3px 0", borderBottom: "1px solid #f8fafc" }}>
+                    <span style={{ fontSize: "11px", color: "#64748b" }}>{k}</span>
+                    <span style={{ fontSize: "11px", fontWeight: 700, color: c as string }}>{v}</span>
+                  </div>
+                ))}
+                <div style={{ fontSize: "11px", color: "#0891b2", marginTop: "8px", fontWeight: 600 }}>
+                  {totalChecked > 0 ? `Проверено: ${fmtDate(monState?.updatedAt || null)}` : "Запустить агентов →"}
+                </div>
+              </button>
+            </div>
           </div>
-        )}
+          );
+        })()}
 
         {/* ════ СУДЕБНЫЕ ДЕЛА ════ */}
         {tab === "cases" && (
           <div>
             <h1 style={{ fontSize: "22px", fontWeight: 800, color: "#0f172a", marginBottom: "4px" }}>Судебные дела</h1>
-            <p style={{ fontSize: "13px", color: "#475569", marginBottom: "22px" }}>5 активных дел · Ближайшее заседание: 29.05.2026 (P.24/21) · Добавляйте обновления от адвоката</p>
+
+            {/* Cases mini-dashboard */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "10px", marginBottom: "20px" }}>
+              {[
+                { label: "Активных",      val: "3",            sub: "P.24/21 · P.596/22 · Kt.96/25", color: "#3b82f6" },
+                { label: "Приостановлено", val: "1",           sub: "P.785/22 — адвокат не явился",  color: "#f59e0b" },
+                { label: "Исполнено",     val: "1",            sub: "UPI224/22 — кадастр ✅",         color: "#22c55e" },
+                { label: "Следующее",     val: "29.05.2026",   sub: "P.24/21 · через 18 дней",        color: "#ef4444" },
+              ].map(k => (
+                <div key={k.label} style={{ background: "#fff", borderRadius: "10px", padding: "12px 14px", border: "1px solid #e2e8f0", borderTop: `3px solid ${k.color}` }}>
+                  <div style={{ fontSize: "18px", fontWeight: 800, color: "#0f172a", marginBottom: "2px" }}>{k.val}</div>
+                  <div style={{ fontSize: "11px", fontWeight: 700, color: "#374151" }}>{k.label}</div>
+                  <div style={{ fontSize: "10px", color: "#64748b", marginTop: "2px" }}>{k.sub}</div>
+                </div>
+              ))}
+            </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
               {CASES.map(c => {
@@ -561,7 +678,20 @@ export default function Home() {
         {tab === "value" && (
           <div>
             <h1 style={{ fontSize: "22px", fontWeight: 800, color: "#0f172a", marginBottom: "4px" }}>Мониторинг стоимости актива</h1>
-            <p style={{ fontSize: "13px", color: "#475569", marginBottom: "22px" }}>Бечичи, Будва · 8 667 м² · данные рынка май 2026</p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "10px", marginBottom: "20px" }}>
+              {[
+                { label: "Текущая оценка",   val: `€${(est/1e6).toFixed(2)}M`,           sub: `${sc.perM2} €/м² · ${sc.note}`,      color: "#15803d" },
+                { label: "Цена 2021",        val: "€2.11M",                             sub: "244 €/м² × 8 667 м²",                color: "#64748b" },
+                { label: "Прирост",          val: `+€${(growth/1e3).toFixed(0)}K`,       sub: `+${Math.round((sc.perM2/244-1)*100)}% за 5 лет`, color: "#7e22ce" },
+                { label: "Тренд 2026",       val: "+10–15%/год",                         sub: "прогноз Investropa · Бечичи",         color: "#d97706" },
+              ].map(k => (
+                <div key={k.label} style={{ background: "#fff", borderRadius: "10px", padding: "12px 14px", border: "1px solid #e2e8f0", borderTop: `3px solid ${k.color}` }}>
+                  <div style={{ fontSize: "18px", fontWeight: 800, color: k.color, marginBottom: "2px" }}>{k.val}</div>
+                  <div style={{ fontSize: "11px", fontWeight: 700, color: "#374151" }}>{k.label}</div>
+                  <div style={{ fontSize: "10px", color: "#64748b", marginTop: "2px" }}>{k.sub}</div>
+                </div>
+              ))}
+            </div>
 
             <Card style={{ marginBottom: "14px" }}>
               <Sec>Сценарий оценки</Sec>
@@ -652,7 +782,20 @@ export default function Home() {
         {tab === "asset" && (
           <div>
             <h1 style={{ fontSize: "22px", fontWeight: 800, color: "#0f172a", marginBottom: "4px" }}>Актив — земельные участки</h1>
-            <p style={{ fontSize: "13px", color: "#475569", marginBottom: "22px" }}>КО Бечичи · Ивановичи · Будва · Черногория</p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "10px", marginBottom: "20px" }}>
+              {[
+                { label: "Общая площадь", val: "8 667 м²",    sub: "LN 977 + LN 989 · КО Бечичи",    color: "#1d4ed8" },
+                { label: "Застройка",     val: "≤13 867 м²",  sub: "Коэф. 1.6 · Ц+3+подвал",         color: "#7e22ce" },
+                { label: "Кадастр",       val: "✅ Отметка",  sub: "Блокировка продажи с 05.04.2022", color: "#15803d" },
+                { label: "Компания",      val: "Активна ⚠️",  sub: "Capital Plus DOO · Банченко в ней", color: "#d97706" },
+              ].map(k => (
+                <div key={k.label} style={{ background: "#fff", borderRadius: "10px", padding: "12px 14px", border: "1px solid #e2e8f0", borderTop: `3px solid ${k.color}` }}>
+                  <div style={{ fontSize: "16px", fontWeight: 800, color: k.color, marginBottom: "2px" }}>{k.val}</div>
+                  <div style={{ fontSize: "11px", fontWeight: 700, color: "#374151" }}>{k.label}</div>
+                  <div style={{ fontSize: "10px", color: "#64748b", marginTop: "2px" }}>{k.sub}</div>
+                </div>
+              ))}
+            </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px", marginBottom: "14px" }}>
               {[
                 { ln: "LN 977", area: "6 039 м²", rows: [["Участок","634"],["Тип","Шуме 2. класе"],["КО","Бечичи"],["Собственник","Capital Plus DOO ✅"],["Обременения 2017","Отсутствуют"],["Отметка спора","с 05.04.2022"]] },
