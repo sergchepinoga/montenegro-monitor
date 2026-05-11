@@ -547,23 +547,27 @@ export default function Home() {
               <button onClick={() => setTab("monitoring")} style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "12px", padding: "16px", textAlign: "left", cursor: "pointer", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
                 <div style={{ fontSize: "11px", fontWeight: 700, color: "#0891b2", textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: "10px" }}>🔍 Агенты</div>
                 {([
-                  ["Суды (Odluke)", "court_odluke"],
-                  ["Кадастр (eKatastar)", "katastar_e"],
-                  ["CRPS (Реестр)", "crps_search"],
-                  ["Рынок (Estitor)", "estitor"],
-                ] as [string, string][]).map(([k, id]) => {
+                  ["Суды (Odluke)", "court_odluke",  false],
+                  ["Кадастр (eKatastar)", "katastar_e", true],
+                  ["CRPS (Реестр)", "crps_search",   true],
+                  ["Рынок (Estitor)", "estitor",      false],
+                ] as [string, string, boolean][]).map(([k, id, needsEuAccess]) => {
                   const src = monState?.sources?.[id];
                   const isBotBlocked = src?.extracted?.botBlocked === 1;
+                  // Gov sites (.me) may be inaccessible from non-EU servers — show neutral instead of red
+                  const isGovInaccessible = needsEuAccess && src?.status === "error";
                   const label = !src?.lastChecked ? "⏳ Ожидает"
                     : isBotBlocked ? "🛡️ Защита бота"
+                    : isGovInaccessible ? "🔐 Вход требуется"
                     : src.status === "ok" ? "✅ Онлайн"
-                    : src.status === "error" ? "❌ Недоступен"
+                    : src.status === "error" ? "⚠️ Проверить"
                     : src.status === "slow" ? "⚠️ Медленно"
                     : "⏳ Ожидает";
                   const color = !src?.lastChecked ? "#94a3b8"
                     : isBotBlocked ? "#d97706"
+                    : isGovInaccessible ? "#475569"
                     : src.status === "ok" ? "#15803d"
-                    : src.status === "error" ? "#dc2626"
+                    : src.status === "error" ? "#d97706"
                     : "#d97706";
                   return (
                     <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "3px 0", borderBottom: "1px solid #f8fafc" }}>
