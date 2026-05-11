@@ -258,18 +258,18 @@ export async function scrapeHearingSchedule(prevExtracted?: Record<string, strin
 // ── CADASTRE (ekatastar.me) ───────────────────────────────────────────────────
 // Checks public land registry for our specific parcels
 export async function scrapeCadastre(prevExtracted?: Record<string, string | number | null>): Promise<ScraperResult> {
-  // Try the public ekatastar portal
-  const url = "https://ekatastar.me";
-  const res = await fetchHtml(url);
+  // Try multiple cadastre URLs in parallel
+  const [res, geo, uprava] = await Promise.all([
+    fetchHtml("https://ekatastar.me"),
+    fetchHtml("https://geoportal.co.me/geoportal/geoportal_eng.html"),
+    fetchHtml("https://www.gov.me/en/upravazan-ekretnine"),
+  ]);
 
-  // Also try geoportal
-  const geo = await fetchHtml("https://geoportal.co.me/geoportal/geoportal_eng.html");
-
-  if (!res && !geo) {
-    return { ok: false, ms: 0, status: null, extracted: {}, summary: "❌ Кадастр и геопортал недоступны", changed: false };
+  if (!res && !geo && !uprava) {
+    return { ok: false, ms: 0, status: null, extracted: {}, summary: "❌ Все кадастровые порталы недоступны", changed: false };
   }
 
-  const r = res || geo!;
+  const r = res || geo || uprava!;
   const text = r.html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
   const title = r.html.match(/<title[^>]*>([^<]{1,80})<\/title>/i)?.[1]?.trim() ?? null;
 
@@ -289,8 +289,9 @@ export async function scrapeCadastre(prevExtracted?: Record<string, string | num
 
   const parts = [
     `eKatastar: ${res?.status && res.status < 400 ? `✅ ${res.ms}мс` : "❌"}`,
-    `Геопортал: ${geo?.status && geo.status < 400 ? `✅ ${geo.ms}мс` : "❌"}`,
-    "🔍 Поиск LN 977/989: открыть вручную на портале",
+    `Геопортал ЧГ: ${geo?.status && geo.status < 400 ? `✅ ${geo.ms}мс` : "❌"}`,
+    `Управление недвижимостью: ${uprava?.status && uprava.status < 400 ? `✅ ${uprava.ms}мс` : "❌"}`,
+    "🔍 Поиск LN 977/989, КО Бечичи: открыть вручную",
   ];
 
   const summary = `${parts.join(" · ")}${foundBecici ? " · Бечичи найдено в базе" : ""}`;

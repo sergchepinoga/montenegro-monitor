@@ -43,7 +43,7 @@ const CASES = [
   {
     id: "P.24/21", status: "active", statusLabel: "АКТИВНОЕ",
     title: "Исключение Банченко из Capital Plus DOO",
-    court: "Привредни суд Черногории", started: "12.01.2021",
+    court: "Коммерческий суд Черногории", started: "12.01.2021",
     nextHearing: "29.05.2026",
     lastAction: "30.04.2026 — Заседание прошло. Ожидаем заключение финансового эксперта.",
     summary: "Иск об исключении Банченко (Владимир + Славица) из учредителей компании. Ведётся 5+ лет.",
@@ -53,7 +53,7 @@ const CASES = [
   {
     id: "P.596/22", status: "active", statusLabel: "АКТИВНОЕ",
     title: "Отмена договора о совместном строительстве",
-    court: "Привредни суд Черногории", started: "24.12.2021",
+    court: "Коммерческий суд Черногории", started: "24.12.2021",
     nextHearing: "08.05.2026",
     lastAction: "24.03.2026 — Судья: «передача незаконна». Планирует направить дело прокурору.",
     summary: "Отмена договора UZZ 712/20, по которому земля мошеннически передана Hrast CG DOO. Мин-во отменило передачу 18.06.2025.",
@@ -63,7 +63,7 @@ const CASES = [
   {
     id: "P.785/22", status: "paused", statusLabel: "ПРИОСТАНОВЛЕНО",
     title: "Capital Plus DOO vs Hrast CG DOO",
-    court: "Привредни суд Черногории", started: "2022",
+    court: "Коммерческий суд Черногории", started: "2022",
     nextHearing: "—",
     lastAction: "Адвокат Capital Plus (Банченко) не явился → суд приостановил дело.",
     summary: "Инициировано Банченко. Мы вступили как третья сторона (09.11.2024).",
@@ -73,7 +73,7 @@ const CASES = [
   {
     id: "UPI224/22", status: "done", statusLabel: "ИСПОЛНЕНО ✓",
     title: "Уведомление в кадастре о споре",
-    court: "Управление за некретнине (кадастр)", started: "2022",
+    court: "Управление недвижимостью (кадастр)", started: "2022",
     nextHearing: "—",
     lastAction: "Передача LN 989 → Crnovršanin ОТМЕНЕНА. Отметка в кадастре активна.",
     summary: "Отметка в LN 977 и LN 989 с 05.04.2022. Блокирует любую продажу земли.",
@@ -103,13 +103,13 @@ const ALL_SOURCES = [
   { cat: "⚖️ Суды — решения и расписание", color: "#1d4ed8", items: [
     { id: "court_odluke",  name: "🔔 ПУБЛИЧНЫЕ РЕШЕНИЯ суда",  url: "https://sudovi.me/pscg/odluke/",     hi: true,  desc: "Автопоиск P.24/21, P.596/22, P.785/22 в базе решений" },
     { id: "court_rocista", name: "Расписание заседаний",       url: "https://sudovi.me/pscg/kategorija/Qa", hi: true, desc: "Автопоиск наших дел в расписании слушаний" },
-    { id: "court_pscg",    name: "Привредни суд ЧГ (главная)", url: "https://sudovi.me/pscg",             hi: false, desc: "Главная страница коммерческого суда" },
-    { id: "court_ascg",    name: "Апелациони суд ЧГ",          url: "https://sudovi.me/ascg",             hi: false, desc: "Апелляционный суд (для обжалования)" },
+    { id: "court_pscg",    name: "Коммерческий суд ЧГ (главная)", url: "https://sudovi.me/pscg",             hi: false, desc: "Главная страница коммерческого суда" },
+    { id: "court_ascg",    name: "Апелляционный суд ЧГ",          url: "https://sudovi.me/ascg",             hi: false, desc: "Апелляционный суд (для обжалования)" },
   ]},
   { cat: "🗺️ Кадастр — участки LN 977 / LN 989", color: "#15803d", items: [
-    { id: "katastar_e",    name: "🔔 eKatastar CG — LN 977/989", url: "https://ekatastar.me",              hi: true,  desc: "Агент проверяет статус LN 977 (уч.634) и LN 989 (уч.16-20), КО Бечичи" },
+    { id: "katastar_e",    name: "🔔 eKatastar (кадастр) — LN 977/989", url: "https://ekatastar.me",              hi: true,  desc: "Агент проверяет статус LN 977 (уч.634) и LN 989 (уч.16-20), КО Бечичи" },
     { id: "geoportal",     name: "Геопортал Черногории",         url: "https://geoportal.co.me/geoportal/geoportal_eng.html", hi: true, desc: "Геопространственные данные · интерактивная карта кадастра" },
-    { id: "katastar_gov",  name: "Управление за некретнине",     url: "https://www.gov.me/en/upravazan-ekretnine", hi: false, desc: "Официальный кадастровый орган ЧГ" },
+    { id: "katastar_gov",  name: "Управление недвижимостью ЧГ",     url: "https://www.gov.me/en/upravazan-ekretnine", hi: false, desc: "Официальный кадастровый орган ЧГ" },
     { id: "mpa",           name: "Мин-во простр. планирования",  url: "https://www.gov.me/mpa",             hi: false, desc: "Контроль решений UPI · строительные разрешения" },
   ]},
   { cat: "🏢 Реестр компаний", color: "#7e22ce", items: [
@@ -122,8 +122,8 @@ const ALL_SOURCES = [
     { id: "tax_e",         name: "eTaxes — e-Налоги",        url: "https://etaxes.tax.gov.me",                                    hi: true },
   ]},
   { cat: "⚔️ Прокуратура", color: "#dc2626", items: [
-    { id: "prosec_main",   name: "Тужилаштво ЧГ",            url: "https://tuzilastvo.me",                                        hi: true },
-    { id: "police",        name: "Управа полиције ЧГ",       url: "https://www.upolicija.gov.me",                                 hi: true },
+    { id: "prosec_main",   name: "Прокуратура ЧГ",            url: "https://tuzilastvo.me",                                        hi: true },
+    { id: "police",        name: "Полиция Черногории",       url: "https://www.upolicija.gov.me",                                 hi: true },
   ]},
   { cat: "📈 Рынок недвижимости", color: "#0891b2", items: [
     { id: "estitor",       name: "Estitor — Бечичи",         url: "https://estitor.com/me-en/real-estates/purpose-sale/type-land-lot/city-budva/neighbourhood-becici", hi: true,  desc: "Актуальные объявления участков · Бечичи · 2026" },
@@ -405,7 +405,7 @@ export default function Home() {
                   БЛИЖАЙШЕЕ ЗАСЕДАНИЕ: P.24/21 · 29.05.2026
                 </div>
                 <div style={{ fontSize: "12px", color: "#93c5fd" }}>
-                  Привредни суд Черногории · Исключение Банченко из Capital Plus DOO · Ожидаем заключение финансового эксперта
+                  Коммерческий суд Черногории · Исключение Банченко из Capital Plus DOO · Ожидаем заключение финансового эксперта
                 </div>
               </div>
               <div style={{ textAlign: "center", background: "#f0c96a", borderRadius: "10px", padding: "10px 18px", flexShrink: 0 }}>
@@ -483,7 +483,7 @@ export default function Home() {
                 <div style={{ marginTop: "10px", padding: "10px 12px", background: "#f0fdf4", borderRadius: "7px", border: "1px solid #bbf7d0" }}>
                   <div style={{ fontSize: "10px", fontWeight: 700, color: "#15803d", textTransform: "uppercase", letterSpacing: "0.4px", marginBottom: "6px" }}>Следующие действия</div>
                   {[
-                    "29.05.2026 — Заседание P.24/21 (Привредни суд)",
+                    "29.05.2026 — Заседание P.24/21 (Коммерческий суд)",
                     "Уточнить у адвоката статус P.596/22 (08.05.2026)",
                     "Запросить обновление по Kt.96/25 (полиция)",
                   ].map((step, i) => (
@@ -530,17 +530,32 @@ export default function Home() {
               {/* Мониторинг */}
               <button onClick={() => setTab("monitoring")} style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "12px", padding: "16px", textAlign: "left", cursor: "pointer", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
                 <div style={{ fontSize: "11px", fontWeight: 700, color: "#0891b2", textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: "10px" }}>🔍 Агенты</div>
-                {[
-                  ["Суды", monState?.sources?.court_odluke?.status === "ok" ? "✅ Онлайн" : "⏳ Не проверено", monState?.sources?.court_odluke?.status === "ok" ? "#15803d" : "#64748b"],
-                  ["Кадастр", monState?.sources?.katastar_e?.status === "ok" ? "✅ Онлайн" : "⏳ Не проверено", monState?.sources?.katastar_e?.status === "ok" ? "#15803d" : "#64748b"],
-                  ["CRPS", monState?.sources?.crps_search?.status === "ok" ? "✅ Онлайн" : "⏳ Не проверено", monState?.sources?.crps_search?.status === "ok" ? "#15803d" : "#64748b"],
-                  ["Рынок", monState?.sources?.estitor?.status === "ok" ? "✅ Онлайн" : "⏳ Не проверено", monState?.sources?.estitor?.status === "ok" ? "#15803d" : "#64748b"],
-                ].map(([k,v,c]) => (
-                  <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "3px 0", borderBottom: "1px solid #f8fafc" }}>
-                    <span style={{ fontSize: "11px", color: "#64748b" }}>{k}</span>
-                    <span style={{ fontSize: "11px", fontWeight: 700, color: c as string }}>{v}</span>
-                  </div>
-                ))}
+                {([
+                  ["Суды (Odluke)", "court_odluke"],
+                  ["Кадастр (eKatastar)", "katastar_e"],
+                  ["CRPS (Реестр)", "crps_search"],
+                  ["Рынок (Estitor)", "estitor"],
+                ] as [string, string][]).map(([k, id]) => {
+                  const src = monState?.sources?.[id];
+                  const isBotBlocked = src?.extracted?.botBlocked === 1;
+                  const label = !src?.lastChecked ? "⏳ Ожидает"
+                    : isBotBlocked ? "🛡️ Защита бота"
+                    : src.status === "ok" ? "✅ Онлайн"
+                    : src.status === "error" ? "❌ Недоступен"
+                    : src.status === "slow" ? "⚠️ Медленно"
+                    : "⏳ Ожидает";
+                  const color = !src?.lastChecked ? "#94a3b8"
+                    : isBotBlocked ? "#d97706"
+                    : src.status === "ok" ? "#15803d"
+                    : src.status === "error" ? "#dc2626"
+                    : "#d97706";
+                  return (
+                    <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "3px 0", borderBottom: "1px solid #f8fafc" }}>
+                      <span style={{ fontSize: "11px", color: "#64748b" }}>{k}</span>
+                      <span style={{ fontSize: "11px", fontWeight: 700, color }}>{label}</span>
+                    </div>
+                  );
+                })}
                 <div style={{ fontSize: "11px", color: "#0891b2", marginTop: "8px", fontWeight: 600 }}>
                   {totalChecked > 0 ? `Проверено: ${fmtDate(monState?.updatedAt || null)}` : "Запустить агентов →"}
                 </div>
