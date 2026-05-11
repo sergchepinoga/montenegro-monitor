@@ -78,11 +78,19 @@ Vercel Cron (09:00 Подгорица ежедневно)
 - Law Office Vujačić (Саша Вуячич) · +382 20 229 725
 - info@lawoffice-vujacic.com · Bul. Ivana Crnojevića 56/2, Podgorica
 
-## Для 2-й проверки в день (19:00 Подгорица)
-Создать задание на cron-job.org:
-- URL: `https://montenegro-app.vercel.app/api/cron`
-- Header: `Authorization: Bearer mont2026secret`
-- Schedule: `0 17 * * *` (17:00 UTC = 19:00 Подгорица)
+## Расписание агентов (Братислава UTC+2 летом)
+- **Запуск 1:** Vercel Cron · `0 7 * * *` · **09:00 Братислава**
+- **Запуск 2:** cron-job.org · `0 18 * * *` · **20:00 Братислава**
+
+### Настройка cron-job.org (бесплатно, для 20:00)
+1. Зайдите на **cron-job.org** → Sign Up (бесплатно)
+2. Create cronjob:
+   - Title: `Montenegro Monitor Evening`
+   - URL: `https://montenegro-app.vercel.app/api/cron`
+   - Schedule: Every day at **18:00 UTC**
+   - Request method: GET
+   - Headers: `Authorization: Bearer mont2026secret`
+3. Save → Enable
 
 ## Telegram (при наличии токена)
 - Env: `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID=73116273`

@@ -1,7 +1,14 @@
 import { NextResponse } from "next/server";
 
-// All sources to check — called by Vercel Cron daily at 07:00 UTC (09:00 Podgorica)
-// Also accessible via cron-job.org for 2nd daily check at 16:00 UTC (18:00 Podgorica)
+// SCHEDULE (Bratislava time = UTC+2 in summer):
+// Run 1: Vercel Cron     → 07:00 UTC = 09:00 Bratislava  (vercel.json: "0 7 * * *")
+// Run 2: cron-job.org    → 18:00 UTC = 20:00 Bratislava  (external free service)
+//
+// cron-job.org setup:
+//   URL: https://montenegro-app.vercel.app/api/cron
+//   Method: GET
+//   Header: Authorization: Bearer mont2026secret
+//   Schedule: 18:00 UTC daily
 export async function GET(req: Request) {
   const auth = req.headers.get("authorization");
   if (process.env.CRON_SECRET && auth !== `Bearer ${process.env.CRON_SECRET}`) {
