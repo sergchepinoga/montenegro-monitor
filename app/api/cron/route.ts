@@ -50,6 +50,15 @@ const CASE_PATTERNS: Record<string, string[]> = {
   "Kt.96/25": ["Kt.96/25","Kt 96/25","96/25","109/21"],
 };
 
+// Short titles for Telegram notifications
+const CASE_TITLES: Record<string, string> = {
+  "P.24/21":   "Исключение Банченко из Capital Plus DOO",
+  "P.596/22":  "Отмена договора о совм. строительстве (возврат земли)",
+  "P.785/22":  "Capital Plus vs Hrast CG — приостановлено",
+  "UPI224/22": "Кадастровая отметка о судебном споре",
+  "Kt.96/25":  "Уголовное дело против Банченко (мошенничество)",
+};
+
 const COURT_URLS = [
   "https://sudovi.me/pscg/odluke/",
   "https://sudovi.me/pscg/kategorija/Qa",
@@ -135,7 +144,13 @@ export async function GET(req: Request) {
       if (!last || last.text !== newText) {
         state.caseUpdates[caseId].unshift({ id: randomUUID(), date: now, dateRu: formatDateRu(now), text: newText, source: "🤖 Агент" });
         caseUpdatesAdded++;
-        await sendTelegram(`⚖️ <b>Агент нашёл по делу ${caseId}!</b>\n${findings[0].slice(0,250)}\n📅 ${formatDateRu(now)}`);
+        await sendTelegram(`⚖️ <b>Агент нашёл обновление!</b>
+
+Дело: <b>${caseId} — ${CASE_TITLES[caseId] ?? ""}</b>
+
+${findings[0].slice(0,250)}
+
+📅 ${formatDateRu(now)}`);
       }
     }
   }
