@@ -1336,8 +1336,8 @@ export default function Home() {
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: "13px", fontWeight: 700, color: "#f0c96a", marginBottom: "4px" }}>Расписание автоматических проверок</div>
                 <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.7)" }}>
-                  09:00 Братислава — Vercel Cron (ежедневно) &nbsp;·&nbsp;
-                  20:00 Братислава — cron-job.org job #7589398 (ежедневно)
+                  09:00 Братислава — утренняя проверка (ежедневно) &nbsp;·&nbsp;
+                  20:00 Братислава — вечерняя проверка (ежедневно)
                 </div>
               </div>
               <div style={{ textAlign: "right", flexShrink: 0 }}>
