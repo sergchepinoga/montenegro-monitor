@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readState, writeState, formatDateRu } from "@/lib/monitor-store";
+import { sendTelegram, buildChangeAlert } from "@/lib/telegram";
 import {
   scrapeCourt, scrapeCourtDecisions, scrapeHearingSchedule,
   scrapeCompany, scrapeEstitor, scrapeCadastre, checkGeneric
@@ -54,6 +55,16 @@ export async function POST(req: NextRequest) {
     }
     state.updatedAt = new Date().toISOString();
     writeState(state);
+
+    // Send Telegram alerts for changed sources
+    const changedSources = body.sources?.filter(s => state.sources[s.id]?.changed) ?? [];
+    for (const s of changedSources) {
+      const src = state.sources[s.id];
+      if (src?.note) {
+        await sendTelegram(buildChangeAlert(s.id, src.note, formatDateRu(state.updatedAt)));
+      }
+    }
+
     return NextResponse.json({ ok: true, updatedAt: formatDateRu(state.updatedAt), sources: state.sources });
   }
 
