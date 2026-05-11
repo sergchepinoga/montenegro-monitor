@@ -152,7 +152,7 @@ const ALL_SOURCES = [
   ]},
   { cat: "📋 Адвокат — Law Office Vujačić", color: "#374151", items: [
     { id: "lawyer",        name: "📋 Саша Вуячич — сайт конторы", url: "https://lawoffice-vujacic.com/", hi: true,
-      desc: "✅ Контакт: +382 20 229 725 · info@lawoffice-vujacic.com · Подгорица" },
+      desc: "✅ Контакт: +382 67 538 885 · info@lawoffice-vujacic.com · Подгорица" },
   ]},
 ];
 
@@ -1047,7 +1047,7 @@ export default function Home() {
                   <div style={{ fontSize: "12px", color: "#475569", borderTop: "1px solid #bae6fd", paddingTop: "8px" }}>
                     <strong>Юридическое сопровождение:</strong> Law Office Vujačić &nbsp;·&nbsp;
                     Адвокат: Саша Вуячич &nbsp;·&nbsp;
-                    <a href="tel:+38220229725" style={{ color: "#1d4ed8" }}>+382 (0) 20 229 725</a> &nbsp;·&nbsp;
+                    <a href="tel:+38267538885" style={{ color: "#1d4ed8" }}>+382 67 538 885</a> &nbsp;·&nbsp;
                     <a href="mailto:info@lawoffice-vujacic.com" style={{ color: "#1d4ed8" }}>info@lawoffice-vujacic.com</a> &nbsp;·&nbsp;
                     Bul. Ivana Crnojevića 56/2, 81000 Podgorica
                   </div>
