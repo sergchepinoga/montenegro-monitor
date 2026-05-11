@@ -231,10 +231,9 @@ export default function Home() {
   const [monState, setMonState] = useState<MonitorState | null>(null);
   const [checking, setChecking] = useState<Record<string, boolean>>({});
   const [checkingAll, setCheckingAll] = useState(false);
-  // PDF upload state
-  const [uploadingTo, setUploadingTo] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const [uploadResult, setUploadResult] = useState<string | null>(null);
+  // Case agent state
+  const [caseAgentStatus, setCaseAgentStatus] = useState<Record<string, {lastChecked:string|null;found:boolean;note:string}>>({});
+  const [runningAgent, setRunningAgent] = useState<string | null>(null);
 
   const sc = PRICE_SCENARIOS[priceIdx];
   const est = AREA_M2 * sc.perM2;
@@ -295,27 +294,26 @@ export default function Home() {
     }
   }
 
-  // Upload PDF report from lawyer
-  async function uploadPdf(caseId: string, file: File) {
-    setUploading(true);
-    setUploadResult(null);
+  // Run case agent manually for a single case
+  async function runCaseAgent(caseId: string) {
+    setRunningAgent(caseId);
     try {
-      const fd = new FormData();
-      fd.append("file", file);
-      fd.append("caseId", caseId);
-      const res = await fetch("/api/parse-pdf", { method: "POST", body: fd });
+      const res = await fetch("/api/case-agent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ caseId }),
+      });
       if (res.ok) {
         const data = await res.json();
-        setUploadResult(`✅ Разобрано: ${data.pages} стр. · ${data.textLength} символов`);
-        // Reload state to get new update
+        // Reload monitor state to show new update
         const stateRes = await fetch("/api/monitor");
         if (stateRes.ok) setMonState(await stateRes.json());
-        setTimeout(() => { setUploadingTo(null); setUploadResult(null); }, 3000);
-      } else {
-        setUploadResult("❌ Ошибка парсинга PDF");
+        // Update agent status
+        const statusRes = await fetch("/api/case-agent");
+        if (statusRes.ok) setCaseAgentStatus(await statusRes.json());
       }
     } finally {
-      setUploading(false);
+      setRunningAgent(null);
     }
   }
 
@@ -621,31 +619,38 @@ export default function Home() {
                         <div style={{ fontSize: "13px", color: "#1e293b", fontWeight: 500 }}>{c.lastAction}</div>
                       </div>
 
-                      {/* Actions row */}
+                      {/* Actions row — agent status + manual trigger */}
                       <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px", flexWrap: "wrap" }}>
                         <button onClick={() => setOpenCase(open ? null : c.id)} style={{ fontSize: "12px", color: "#1d4ed8", background: "none", border: "none", cursor: "pointer", fontWeight: 600, padding: 0, display: "flex", alignItems: "center", gap: "4px" }}>
                           <span style={{ transform: open ? "rotate(90deg)" : "rotate(0)", transition: "transform 0.15s", display: "inline-block", fontSize: "10px" }}>▶</span>
                           {open ? "Скрыть историю" : "История дела"} ({c.history.length} событий)
                         </button>
+
+                        {/* Agent status badge */}
+                        {(() => {
+                          const agentKey = `case_${c.id.replace(/[./]/g, "_")}`;
+                          const agentSrc = monState?.sources?.[agentKey];
+                          if (agentSrc?.lastChecked) {
+                            return (
+                              <span style={{ fontSize: "10px", color: agentSrc.status === "ok" ? "#15803d" : "#64748b", background: agentSrc.status === "ok" ? "#f0fdf4" : "#f8fafc", padding: "2px 8px", borderRadius: "5px", border: `1px solid ${agentSrc.status === "ok" ? "#bbf7d0" : "#e2e8f0"}` }}>
+                                🤖 {agentSrc.status === "ok" ? "Найдено в суде" : "Не найдено"} · {fmtDate(agentSrc.lastChecked)}
+                              </span>
+                            );
+                          }
+                          return null;
+                        })()}
+
                         {updates.length > 0 && (
-                          <span style={{ fontSize: "11px", color: "#059669", fontWeight: 700, background: "#f0fdf4", padding: "2px 8px", borderRadius: "5px", border: "1px solid #bbf7d0" }}>
-                            📄 {updates.length} отчётов загружено
+                          <span style={{ fontSize: "11px", color: "#3b82f6", fontWeight: 700, background: "#eff6ff", padding: "2px 8px", borderRadius: "5px", border: "1px solid #bfdbfe" }}>
+                            🤖 {updates.length} обновлений агента
                           </span>
                         )}
-                        {/* PDF upload */}
-                        <label style={{ marginLeft: "auto", display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "12px", fontWeight: 700, color: "#fff", background: uploading && uploadingTo === c.id ? "#94a3b8" : "#059669", padding: "6px 13px", borderRadius: "6px", cursor: "pointer", border: "none" }}>
-                          {uploading && uploadingTo === c.id ? "⟳ Разбираю PDF…" : "📎 Загрузить PDF-отчёт"}
-                          <input type="file" accept=".pdf,application/pdf" style={{ display: "none" }}
-                            onChange={e => {
-                              const f = e.target.files?.[0];
-                              if (f) { setUploadingTo(c.id); uploadPdf(c.id, f); }
-                              e.target.value = "";
-                            }}
-                          />
-                        </label>
-                        {uploadingTo === c.id && uploadResult && (
-                          <span style={{ fontSize: "11px", color: uploadResult.startsWith("✅") ? "#15803d" : "#dc2626", fontWeight: 600 }}>{uploadResult}</span>
-                        )}
+
+                        {/* Manual agent trigger */}
+                        <button onClick={() => runCaseAgent(c.id)} disabled={runningAgent === c.id}
+                          style={{ marginLeft: "auto", fontSize: "12px", fontWeight: 700, color: "#fff", background: runningAgent === c.id ? "#94a3b8" : "#0f2744", border: "none", padding: "6px 13px", borderRadius: "6px", cursor: "pointer" }}>
+                          {runningAgent === c.id ? "⟳ Агент проверяет…" : "🤖 Запустить агента"}
+                        </button>
                       </div>
                     </div>
 

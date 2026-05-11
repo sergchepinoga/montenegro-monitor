@@ -43,6 +43,7 @@ export async function GET(req: Request) {
   ];
 
   try {
+    // 1. Run source monitoring
     const res = await fetch(`${base}/api/monitor`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -51,11 +52,24 @@ export async function GET(req: Request) {
     const data = await res.json();
     const checked = Object.keys(data.sources ?? {}).length;
     const ok = Object.values(data.sources ?? {}).filter((s: unknown) => (s as {status:string}).status === "ok").length;
+
+    // 2. Run case agents — automatically search court decisions for each case
+    let caseResults = null;
+    try {
+      const caseRes = await fetch(`${base}/api/case-agent`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ checkAll: true }),
+      });
+      caseResults = await caseRes.json();
+    } catch { /* case agent errors don't fail the cron */ }
+
     return NextResponse.json({
       ok: true,
       ran: new Date().toISOString(),
-      checked,
-      online: ok,
+      sourcesChecked: checked,
+      sourcesOnline: ok,
+      caseAgents: caseResults?.results?.length ?? 0,
       updatedAt: data.updatedAt,
     });
   } catch (e) {
