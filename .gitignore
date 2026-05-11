@@ -3,3 +3,4 @@ node_modules/
 monitor-state.json
 .env*.local
 *.log
+.vercel

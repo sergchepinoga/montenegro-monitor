@@ -434,7 +434,7 @@ export default function Home() {
                   const s = STATUS_CFG[c.status];
                   const updates = monState?.caseUpdates[c.id] || [];
                   return (
-                    <button key={c.id} onClick={() => { setTab("cases"); setOpenCase(c.id); }} style={{ width: "100%", display: "flex", alignItems: "center", gap: "8px", padding: "8px 0", borderBottom: "1px solid #f1f5f9", background: "none", border: "none", borderBottom: "1px solid #f1f5f9", cursor: "pointer", textAlign: "left" }}>
+                    <button key={c.id} onClick={() => { setTab("cases"); setOpenCase(c.id); }} style={{ width: "100%", display: "flex", alignItems: "center", gap: "8px", padding: "8px 0", borderBottom: "1px solid #f1f5f9", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}>
                       <span style={{ width: "7px", height: "7px", borderRadius: "50%", background: s.dot, flexShrink: 0, display: "inline-block" }} />
                       <span style={{ fontSize: "12px", fontWeight: 700, color: "#0f172a" }}>{c.id}</span>
                       <span style={{ fontSize: "11px", color: "#475569", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.title.slice(0, 38)}…</span>
