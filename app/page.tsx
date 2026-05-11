@@ -1038,7 +1038,7 @@ export default function Home() {
               <div style={{ background: "#f0f9ff", borderRadius: "8px", padding: "12px 16px", border: "1px solid #bae6fd" }}>
                 <div style={{ fontSize: "11px", fontWeight: 700, color: "#0284c7", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "6px" }}>Контакт для переговоров</div>
                 <div style={{ fontSize: "13px", color: "#374151" }}>
-                  Сергей Чепинога &nbsp;·&nbsp; <a href="tel:+420234674141" style={{ color: "#1d4ed8" }}>+420 234 67 41 41</a> &nbsp;·&nbsp; <a href="mailto:serg@chepinoga.com" style={{ color: "#1d4ed8" }}>serg@chepinoga.com</a>
+                  Сергей Чепинога &nbsp;·&nbsp; <a href="tel:+421904878937" style={{ color: "#1d4ed8" }}>+421 904 878 937</a> &nbsp;·&nbsp; <a href="mailto:serg@chepinoga.com" style={{ color: "#1d4ed8" }}>serg@chepinoga.com</a>
                   &nbsp;·&nbsp; Языки: русский, английский &nbsp;·&nbsp; Юридическое сопровождение: Law Office Vujačić, Подгорица
                 </div>
               </div>
