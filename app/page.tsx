@@ -990,18 +990,67 @@ export default function Home() {
         {/* ════ ПРОЕКТ ════ */}
         {tab === "project" && (
           <div>
-            <h1 style={{ fontSize: "22px", fontWeight: 800, color: "#0f172a", marginBottom: "4px" }}>Проект застройки</h1>
-            <p style={{ fontSize: "13px", color: "#475569", marginBottom: "22px" }}>
-              Разработанный и утверждённый проект · 3 фазы · 26 вилл (4-этажных) · Коэф. застройки 1.6 · Проект заморожен до решения суда
+            <h1 style={{ fontSize: "22px", fontWeight: 800, color: "#0f172a", marginBottom: "4px" }}>Проект застройки — Бечичи, Черногория</h1>
+            <p style={{ fontSize: "13px", color: "#475569", marginBottom: "18px" }}>
+              Утверждённый проект · 3 фазы · Коэф. застройки 1.6 · Проект приостановлен до завершения судебных дел
             </p>
+
+            {/* Business description */}
+            <Card style={{ marginBottom: "14px", borderLeft: "4px solid #1d4ed8" }}>
+              <Sec>📋 Описание проекта и условия сотрудничества</Sec>
+              <p style={{ fontSize: "13px", color: "#374151", lineHeight: "1.7", marginBottom: "14px" }}>
+                Земельный участок 8 667 м² в Бечичи / Ивановичи, Будва, Черногория. Расположен выше отеля Splendid Conference &amp; Spa Resort 5★, в 800 м от моря.
+                Проект разработан, пересмотрен и утверждён, разделён на три фазы строительства.
+              </p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px", marginBottom: "14px" }}>
+                <div>
+                  <div style={{ fontSize: "11px", fontWeight: 700, color: "#374151", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "8px" }}>Технические параметры</div>
+                  {[
+                    ["Право собственности", "1/1 (100%)"],
+                    ["Коэф. застройки", "1.6"],
+                    ["Коэф. занятия участка", "0.4"],
+                    ["Этажность", "Ц+3+подвал (возможно увеличение)"],
+                    ["Подвал", "Не включается в БРGП"],
+                    ["До моря", "800 м"],
+                  ].map(([k,v]) => (
+                    <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "4px 0", borderBottom: "1px solid #f1f5f9" }}>
+                      <span style={{ fontSize: "12px", color: "#64748b" }}>{k}</span>
+                      <span style={{ fontSize: "12px", fontWeight: 600, color: "#0f172a" }}>{v}</span>
+                    </div>
+                  ))}
+                </div>
+                <div>
+                  <div style={{ fontSize: "11px", fontWeight: 700, color: "#374151", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "8px" }}>Варианты сотрудничества</div>
+                  {[
+                    "Продажа земли полностью (с проектом и компанией)",
+                    "Раздельная продажа участков",
+                    "Совместная инвестиция (Фаза 1 с фундаментами)",
+                    "Замена проекта на альтернативный",
+                    "Другие предложения рассматриваются",
+                  ].map((v, i) => (
+                    <div key={i} style={{ fontSize: "12px", color: "#374151", padding: "4px 0", borderBottom: "1px solid #f1f5f9", display: "flex", gap: "8px" }}>
+                      <span style={{ color: "#1d4ed8", flexShrink: 0 }}>→</span>{v}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {/* Contact */}
+              <div style={{ background: "#f0f9ff", borderRadius: "8px", padding: "12px 16px", border: "1px solid #bae6fd" }}>
+                <div style={{ fontSize: "11px", fontWeight: 700, color: "#0284c7", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "6px" }}>Контакт для переговоров</div>
+                <div style={{ fontSize: "13px", color: "#374151" }}>
+                  Сергей Чепинога &nbsp;·&nbsp; <a href="tel:+420234674141" style={{ color: "#1d4ed8" }}>+420 234 67 41 41</a> &nbsp;·&nbsp; <a href="mailto:serg@chepinoga.com" style={{ color: "#1d4ed8" }}>serg@chepinoga.com</a>
+                  &nbsp;·&nbsp; Языки: русский, английский &nbsp;·&nbsp; Юридическое сопровождение: Law Office Vujačić, Подгорица
+                </div>
+              </div>
+            </Card>
 
             {/* Project summary */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "10px", marginBottom: "14px" }}>
               {[
-                { icon: "🏠", val: "26 вилл",    label: "По ДУП", sub: "4-этажные виллы" },
                 { icon: "📐", val: "13 867 м²",  label: "Застраиваемая площадь", sub: "Коэф. 1.6 × 8 667 м²" },
-                { icon: "🔢", val: "3 фазы",     label: "Фаз строительства", sub: "Фаза 1 — с фундаментами" },
-                { icon: "⏸️", val: "Заморожен",  label: "Статус проекта", sub: "До решения суда по P.596/22" },
+                { icon: "🔢", val: "3 фазы",     label: "Фаз строительства", sub: "Фаза 1 — фундаменты готовы" },
+                { icon: "📊", val: "€370+/м²",   label: "Рыночная цена 2026", sub: "Рост с €244/м² (2021)" },
+                { icon: "⏸️", val: "Приостановлен", label: "Статус", sub: "Ждём решения P.596/22" },
               ].map(k => (
                 <div key={k.label} style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "10px", padding: "14px 16px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", textAlign: "center" }}>
                   <div style={{ fontSize: "22px", marginBottom: "6px" }}>{k.icon}</div>
@@ -1017,19 +1066,19 @@ export default function Home() {
               <Sec>Описание фаз строительства</Sec>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "12px" }}>
                 {[
-                  { phase: "Фаза 1", status: "Частично начата", color: "#d97706", bg: "#fffbeb", border: "#fde68a",
-                    desc: "Участок LN 989 (2 628 м²). Возведены опорные стены и фундаменты для 6 четырёхэтажных вилл. Строительство приостановлено." },
-                  { phase: "Фаза 2", status: "Не начата", color: "#64748b", bg: "#f8fafc", border: "#e2e8f0",
-                    desc: "Участок LN 977 (часть). По ДУП предусмотрено строительство следующей очереди вилл. Опорная стена возведена." },
-                  { phase: "Фаза 3", status: "Не начата", color: "#64748b", bg: "#f8fafc", border: "#e2e8f0",
-                    desc: "Участок LN 977 (6 039 м²). Завершающая очередь по ДУП. Возможна альтернативная концепция застройки." },
+                  { phase: "Фаза 1 — Участок LN 989", status: "Частично начата", color: "#d97706", bg: "#fffbeb", border: "#fde68a",
+                    desc: "2 628 м². Возведены опорные стены и фундаменты для 6 четырёхэтажных вилл. Возможна совместная инвестиция." },
+                  { phase: "Фаза 2 — Участок LN 977", status: "Не начата", color: "#64748b", bg: "#f8fafc", border: "#e2e8f0",
+                    desc: "Часть LN 977. Опорная стена возведена. По ДУП — следующая очередь вилл. Дорога включена в бюджет муниципалитета." },
+                  { phase: "Фаза 3 — Участок LN 977", status: "Не начата", color: "#64748b", bg: "#f8fafc", border: "#e2e8f0",
+                    desc: "6 039 м². Завершающая очередь по ДУП. Возможна альтернативная концепция застройки под другой проект." },
                 ].map(p => (
                   <div key={p.phase} style={{ background: p.bg, border: `1px solid ${p.border}`, borderRadius: "10px", padding: "14px 16px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                      <span style={{ fontSize: "15px", fontWeight: 700, color: "#0f172a" }}>{p.phase}</span>
-                      <span style={{ fontSize: "11px", fontWeight: 700, color: p.color, background: "#fff", padding: "2px 8px", borderRadius: "999px", border: `1px solid ${p.border}` }}>{p.status}</span>
+                      <span style={{ fontSize: "13px", fontWeight: 700, color: "#0f172a" }}>{p.phase}</span>
+                      <span style={{ fontSize: "10px", fontWeight: 700, color: p.color, background: "#fff", padding: "2px 8px", borderRadius: "999px", border: `1px solid ${p.border}` }}>{p.status}</span>
                     </div>
-                    <p style={{ fontSize: "13px", color: "#374151", lineHeight: "1.55" }}>{p.desc}</p>
+                    <p style={{ fontSize: "12px", color: "#374151", lineHeight: "1.55" }}>{p.desc}</p>
                   </div>
                 ))}
               </div>
