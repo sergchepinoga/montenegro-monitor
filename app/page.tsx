@@ -365,31 +365,37 @@ export default function Home() {
     <div style={{ background: "#f1f5f9", minHeight: "100vh", fontFamily: "-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif", WebkitFontSmoothing: "antialiased" }}>
 
       {/* ── NAV ── */}
-      <nav style={{ background: "#fff", borderBottom: "1px solid #e2e8f0", padding: "0 28px", position: "sticky", top: 0, zIndex: 200, boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
-        <div style={{ height: "50px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <nav style={{ background: "#0f2744", position: "sticky", top: 0, zIndex: 200, boxShadow: "0 2px 8px rgba(0,0,0,0.18)" }}>
+        {/* Brand bar */}
+        <div style={{ height: "52px", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 28px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <div style={{ width: "30px", height: "30px", borderRadius: "7px", background: "linear-gradient(135deg,#1d4ed8,#3b82f6)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "15px" }}>🏔️</div>
-            <span style={{ fontWeight: 700, fontSize: "14px", color: "#0f172a" }}>Montenegro Asset Monitor</span>
-            <span style={{ background: "#eff6ff", color: "#1d4ed8", fontSize: "10px", fontWeight: 700, padding: "2px 7px", borderRadius: "4px", border: "1px solid #bfdbfe" }}>ЛИЧНЫЙ АКТИВ</span>
+            <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "linear-gradient(135deg, #f0c96a, #d4a843)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>🏔️</div>
+            <span style={{ fontWeight: 800, fontSize: "15px", color: "#fff", letterSpacing: "0.2px" }}>Montenegro Asset Monitor</span>
+            <span style={{ background: "rgba(240,201,106,0.2)", color: "#f0c96a", fontSize: "10px", fontWeight: 700, padding: "2px 8px", borderRadius: "4px", border: "1px solid rgba(240,201,106,0.4)" }}>ЛИЧНЫЙ АКТИВ</span>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "14px", fontSize: "12px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "16px", fontSize: "12px" }}>
             {monState?.updatedAt && (
-              <span style={{ color: "#64748b" }}>Мониторинг: <strong style={{ color: "#374151" }}>{fmtDate(monState.updatedAt)}</strong></span>
+              <span style={{ color: "rgba(255,255,255,0.5)" }}>Мониторинг: <strong style={{ color: "rgba(255,255,255,0.85)" }}>{fmtDate(monState.updatedAt)}</strong></span>
             )}
-            <div style={{ display: "flex", alignItems: "center", gap: "5px", color: "#374151", fontWeight: 600 }}>
-              <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 5px #22c55e80" }} />
+            <div style={{ display: "flex", alignItems: "center", gap: "5px", color: "rgba(255,255,255,0.85)", fontWeight: 600 }}>
+              <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 6px #22c55e" }} />
               {TODAY}
             </div>
           </div>
         </div>
-        <div style={{ display: "flex", gap: "2px", borderTop: "1px solid #f1f5f9" }}>
+        {/* Tabs bar — distinct background */}
+        <div style={{ display: "flex", gap: "0", padding: "0 20px", background: "#162d4f" }}>
           {TABS.map(t => (
             <button key={t.id} onClick={() => setTab(t.id)} style={{
-              padding: "10px 18px", fontSize: "13px", fontWeight: tab === t.id ? 700 : 500,
-              color: tab === t.id ? "#1d4ed8" : "#64748b",
-              background: "none", border: "none", cursor: "pointer",
-              borderBottom: tab === t.id ? "2px solid #1d4ed8" : "2px solid transparent",
+              padding: "11px 16px", fontSize: "13px",
+              fontWeight: tab === t.id ? 700 : 500,
+              color: tab === t.id ? "#f0c96a" : "rgba(255,255,255,0.6)",
+              background: tab === t.id ? "rgba(240,201,106,0.1)" : "none",
+              border: "none", cursor: "pointer",
+              borderBottom: tab === t.id ? "2px solid #f0c96a" : "2px solid transparent",
+              borderRadius: tab === t.id ? "4px 4px 0 0" : "0",
               display: "flex", alignItems: "center", gap: "6px",
+              transition: "all 0.15s",
             }}>
               {t.icon} {t.label}
               {t.id === "cases" && <span style={{ background: "#fef3c7", color: "#92400e", fontSize: "10px", fontWeight: 700, padding: "0 5px", borderRadius: "10px" }}>5</span>}
