@@ -14,8 +14,8 @@ export async function register() {
       { id: "prosec_main",  url: "https://tuzilastvo.me",                   scraper: (p: Record<string, string | number | null> | undefined) => checkGeneric("https://tuzilastvo.me", p) },
     ];
 
-    // Run daily at 09:00 Podgorica time (07:00 UTC)
-    cron.schedule("0 7 * * *", async () => {
+    // Run daily at 09:00 and 20:00 Podgorica (07:00 and 18:00 UTC)
+    cron.schedule("0 7,18 * * *", async () => {
       console.log("[Montenegro Monitor] Auto-check started:", new Date().toISOString());
       const state = readState();
       for (const src of SOURCES) {
