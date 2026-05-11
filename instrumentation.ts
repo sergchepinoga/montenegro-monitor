@@ -1,4 +1,4 @@
-// Server-side cron: auto-check all monitoring sources every 30 minutes
+// Server-side cron: auto-check all monitoring sources every 60 minutes
 export async function register() {
   if (process.env.NEXT_RUNTIME === "nodejs") {
     const cron = await import("node-cron");
@@ -14,8 +14,8 @@ export async function register() {
       { id: "prosec_main",  url: "https://tuzilastvo.me",                   scraper: (p: Record<string, string | number | null> | undefined) => checkGeneric("https://tuzilastvo.me", p) },
     ];
 
-    // Run every 30 minutes
-    cron.schedule("*/30 * * * *", async () => {
+    // Run every 60 minutes
+    cron.schedule("0 * * * *", async () => {
       console.log("[Montenegro Monitor] Auto-check started:", new Date().toISOString());
       const state = readState();
       for (const src of SOURCES) {
@@ -41,6 +41,6 @@ export async function register() {
       console.log("[Montenegro Monitor] Auto-check done.");
     });
 
-    console.log("[Montenegro Monitor] Cron scheduler started — auto-check every 30 min.");
+    console.log("[Montenegro Monitor] Cron scheduler started — auto-check every 60 min.");
   }
 }
