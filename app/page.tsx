@@ -202,12 +202,48 @@ function StatusBadge({ st, small }: { st: SourceStatus | undefined; small?: bool
 const TABS = [
   { id: "overview",   label: "Обзор",      icon: "🏠" },
   { id: "cases",      label: "Суд. дела",  icon: "⚖️" },
+  { id: "banchenko",  label: "Банченко",   icon: "🔎" },
   { id: "value",      label: "Стоимость",  icon: "💶" },
   { id: "asset",      label: "Актив",      icon: "🏞️" },
   { id: "location",   label: "Локация",    icon: "📍" },
   { id: "project",    label: "Проект",     icon: "🏗️" },
   { id: "monitoring", label: "Мониторинг", icon: "🔍" },
 ];
+
+// Known data about Banchenko from court documents
+const BANCHENKO_KNOWN = {
+  volodymyr: {
+    name: "Банченко Владимир (Volodymyr Banchenko)",
+    nationality: "Украина",
+    role: "Незаконный директор Capital Plus DOO",
+    cases: ["P.24/21 — ответчик (исключение из компании)", "P.596/22 — ответчик", "Kt.96/25 — обвиняемый (мошенничество)"],
+    charges: ["Злоупотребление должн. положением (ст.272)", "Мошенничество (ст.244)", "Злоупотребление полномочиями (ст.276)", "Подлог документов (ст.412)"],
+    companies: ["Capital Plus DOO (ПИБ 0000002697394) — директор ⚠️"],
+  },
+  slavica: {
+    name: "Банченко Славица (Slavica Banchenko)",
+    nationality: "Неизвестно",
+    role: "Соответчик в деле P.24/21",
+    cases: ["P.24/21 — соответчик (исключение из компании)"],
+    charges: ["Соответчик по иску P.24/21"],
+    companies: ["Связана с Capital Plus DOO через P.24/21"],
+  },
+  connected: [
+    { name: "Hrast CG DOO", role: "Незаконный получатель земли по договору UZZ 712/20", director: "Lazar Radnić (biv. direktor)", status: "Активная ⚠️" },
+    { name: "Romulus Partners DOO", role: "Четвёртый получатель в цепочке (через Crnovršanin)", director: "Неизвестно", status: "Активная ⚠️" },
+    { name: "Сеад Крновршанин", role: "Промежуточный владелец LN 989 (передача отменена)", director: "Физ. лицо", status: "Передача отменена ✅" },
+  ],
+  monitorSources: [
+    { label: "CRPS: поиск Banchenko", url: "http://www.pretraga.crps.me/", instruction: "Ввести: Banchenko" },
+    { label: "CRPS: Capital Plus DOO", url: "http://www.pretraga.crps.me/", instruction: "ПИБ: 0000002697394" },
+    { label: "CRPS: Hrast CG DOO", url: "http://www.pretraga.crps.me/", instruction: "Ввести: Hrast CG" },
+    { label: "CRPS: Romulus Partners", url: "http://www.pretraga.crps.me/", instruction: "Ввести: Romulus Partners" },
+    { label: "IRMS: налог. статус Capital Plus", url: "https://irms.tax.gov.me/public/search-register/business-entities", instruction: "ПИБ: 0000002697394" },
+    { label: "Суд: решения по Banchenko", url: "https://sudovi.me/pscg/odluke/", instruction: "Поиск: Banchenko" },
+    { label: "eKatastar: имущество Banchenko", url: "https://www.ekatastar.me/ekatastar-web/action/elogin", instruction: "Логин: KORISNIK/KORISNIK → поиск: Banchenko" },
+    { label: "Прокуратура ЧГ — Kt.96/25", url: "https://tuzilastvo.me", instruction: "Уголовное дело Kt.96/25" },
+  ],
+};
 
 // ── ЛОКАЦИЯ: схемы, карты и реальные фотографии участка ──────────────────────
 const LOCATION_MAPS = [
@@ -1151,6 +1187,142 @@ export default function Home() {
                         <div style={{ fontSize: "12px", color: "#374151", fontWeight: 600 }}>{p.caption}</div>
                         <div style={{ fontSize: "10px", color: "#1d4ed8", marginTop: "3px" }}>Открыть в полном размере ↗</div>
                       </div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </Card>
+          </div>
+        )}
+
+        {/* ════ БАНЧЕНКО — МОНИТОРИНГ ЛИЦ ════ */}
+        {tab === "banchenko" && (
+          <div>
+            <h1 style={{ fontSize: "22px", fontWeight: 800, color: "#0f172a", marginBottom: "4px" }}>Мониторинг лиц — Банченко</h1>
+            <p style={{ fontSize: "13px", color: "#475569", marginBottom: "20px" }}>
+              Ответчики и связанные лица по делам P.24/21 · P.596/22 · Kt.96/25
+            </p>
+
+            {/* Alert bar */}
+            <div style={{ background: "linear-gradient(135deg, #450a0a, #7f1d1d)", borderRadius: "12px", padding: "14px 20px", marginBottom: "20px", display: "flex", alignItems: "center", gap: "14px" }}>
+              <div style={{ fontSize: "22px" }}>⚠️</div>
+              <div>
+                <div style={{ fontSize: "13px", fontWeight: 700, color: "#fca5a5", marginBottom: "3px" }}>ВНИМАНИЕ: Уголовное дело активно</div>
+                <div style={{ fontSize: "12px", color: "#fecaca" }}>
+                  Kt.96/25 — Высшая прокуратура Подгорицы (Ирена Бурич) · Мошенничество, злоупотребление, подлог · Полиция не предоставила материалы (6 ургенций, 07.04.2026)
+                </div>
+              </div>
+            </div>
+
+            {/* Two persons grid */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
+              {/* Volodymyr */}
+              <Card style={{ borderLeft: "4px solid #dc2626" }}>
+                <div style={{ fontSize: "11px", fontWeight: 700, color: "#dc2626", textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: "12px" }}>
+                  🔎 Банченко Владимир (Volodymyr)
+                </div>
+                <div style={{ fontSize: "14px", fontWeight: 800, color: "#0f172a", marginBottom: "10px" }}>
+                  Незаконный директор Capital Plus DOO
+                </div>
+                {[
+                  ["Гражданство", "Украина"],
+                  ["Роль в деле", "Главный ответчик / обвиняемый"],
+                  ["Текущая должность", "Директор Capital Plus DOO ⚠️"],
+                  ["ПИБ компании", "0000002697394"],
+                ].map(([k, v]) => (
+                  <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", borderBottom: "1px solid #f1f5f9" }}>
+                    <span style={{ fontSize: "12px", color: "#64748b" }}>{k}</span>
+                    <span style={{ fontSize: "12px", fontWeight: 600, color: "#0f172a" }}>{v}</span>
+                  </div>
+                ))}
+                <div style={{ marginTop: "12px" }}>
+                  <div style={{ fontSize: "11px", fontWeight: 700, color: "#dc2626", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "6px" }}>Обвинения (Kt.96/25)</div>
+                  {BANCHENKO_KNOWN.volodymyr.charges.map((c, i) => (
+                    <div key={i} style={{ fontSize: "12px", color: "#374151", padding: "3px 0", display: "flex", gap: "6px" }}>
+                      <span style={{ color: "#dc2626", flexShrink: 0 }}>→</span>{c}
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              {/* Slavica */}
+              <Card style={{ borderLeft: "4px solid #d97706" }}>
+                <div style={{ fontSize: "11px", fontWeight: 700, color: "#d97706", textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: "12px" }}>
+                  🔎 Банченко Славица (Slavica)
+                </div>
+                <div style={{ fontSize: "14px", fontWeight: 800, color: "#0f172a", marginBottom: "10px" }}>
+                  Соответчик по делу P.24/21
+                </div>
+                {[
+                  ["Гражданство", "Устанавливается"],
+                  ["Роль в деле", "Соответчик P.24/21"],
+                  ["Связь с компанией", "Через P.24/21 и Capital Plus"],
+                  ["Родители", "Устанавливаются агентом"],
+                ].map(([k, v]) => (
+                  <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", borderBottom: "1px solid #f1f5f9" }}>
+                    <span style={{ fontSize: "12px", color: "#64748b" }}>{k}</span>
+                    <span style={{ fontSize: "12px", fontWeight: 600, color: "#0f172a" }}>{v}</span>
+                  </div>
+                ))}
+                <div style={{ marginTop: "12px", background: "#fffbeb", borderRadius: "7px", padding: "10px 12px", border: "1px solid #fde68a" }}>
+                  <div style={{ fontSize: "11px", fontWeight: 700, color: "#d97706", marginBottom: "4px" }}>Агент проверяет</div>
+                  <div style={{ fontSize: "11px", color: "#374151" }}>
+                    Директорства · Учредительства · Имущество · Налоги · Родственники в реестрах ЧГ
+                  </div>
+                </div>
+              </Card>
+            </div>
+
+            {/* Connected companies */}
+            <Card style={{ marginBottom: "16px" }}>
+              <Sec>🏢 Связанные юридические лица</Sec>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "10px" }}>
+                {BANCHENKO_KNOWN.connected.map((c, i) => (
+                  <div key={i} style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "9px", padding: "12px 14px" }}>
+                    <div style={{ fontSize: "13px", fontWeight: 700, color: "#0f172a", marginBottom: "4px" }}>{c.name}</div>
+                    <div style={{ fontSize: "11px", color: "#dc2626", marginBottom: "6px" }}>{c.role}</div>
+                    {[["Директор", c.director], ["Статус", c.status]].map(([k, v]) => (
+                      <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "2px 0" }}>
+                        <span style={{ fontSize: "10px", color: "#64748b" }}>{k}</span>
+                        <span style={{ fontSize: "10px", fontWeight: 600, color: "#374151" }}>{v}</span>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            {/* Agent last results */}
+            {(() => {
+              const agentUpdates = monState?.caseUpdates?.["BANCHENKO"] || [];
+              return agentUpdates.length > 0 ? (
+                <Card style={{ marginBottom: "16px", borderLeft: "4px solid #7c3aed" }}>
+                  <Sec>🤖 Последние результаты агента Банченко</Sec>
+                  {agentUpdates.slice(0, 5).map((u, i) => (
+                    <div key={i} style={{ padding: "8px 0", borderBottom: i < agentUpdates.length - 1 ? "1px solid #f1f5f9" : "none" }}>
+                      <div style={{ fontSize: "10px", color: "#64748b", marginBottom: "3px" }}>{u.dateRu} · {u.source}</div>
+                      <div style={{ fontSize: "12px", color: "#374151", whiteSpace: "pre-line" }}>{u.text}</div>
+                    </div>
+                  ))}
+                </Card>
+              ) : (
+                <div style={{ background: "#f8fafc", border: "1px dashed #e2e8f0", borderRadius: "12px", padding: "20px", textAlign: "center", marginBottom: "16px" }}>
+                  <div style={{ fontSize: "24px", marginBottom: "8px" }}>🤖</div>
+                  <div style={{ fontSize: "13px", fontWeight: 600, color: "#374151", marginBottom: "4px" }}>Агент ещё не запускался</div>
+                  <div style={{ fontSize: "12px", color: "#64748b" }}>Результаты появятся после следующей автоматической проверки (09:05 или 20:05 Братислава)</div>
+                </div>
+              );
+            })()}
+
+            {/* Monitoring sources */}
+            <Card>
+              <Sec>🔍 Источники для проверки — открыть вручную</Sec>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: "8px" }}>
+                {BANCHENKO_KNOWN.monitorSources.map((s, i) => (
+                  <a key={i} href={s.url} target="_blank" rel="noopener noreferrer" style={{ display: "flex", gap: "12px", background: "#f8fafc", border: "1px solid #e2e8f0", borderLeft: "3px solid #dc2626", borderRadius: "8px", padding: "10px 12px", textDecoration: "none", color: "inherit" }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: "12px", fontWeight: 700, color: "#0f172a", marginBottom: "2px" }}>{s.label} ↗</div>
+                      <div style={{ fontSize: "11px", color: "#64748b" }}>{s.instruction}</div>
                     </div>
                   </a>
                 ))}
