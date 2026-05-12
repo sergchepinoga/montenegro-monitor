@@ -1,97 +1,121 @@
 # Montenegro Asset Monitor — CLAUDE.md
 
-## Проект
-Персональный дашборд мониторинга актива в Черногории для Сергея Чепиноги.
+## CRITICAL: Project Identity
+- **Это НЕ CHEVORA и НЕ AGON** — отдельный личный проект Сергея
+- Всегда работать из папки `/Users/chepinoga/GitHub-Agon/montenegro-app/`
+- GitHub: `sergchepinoga/montenegro-monitor` (аккаунт `sergchepinoga`, НЕ chevora, НЕ Agonsg)
+- Vercel: аккаунт `schepinoga` / workspace `schepinogas-projects`
 
-- **Путь:** `/Users/chepinoga/GitHub-Agon/montenegro-app`
-- **Домен:** `montenegro.chepinoga.com` (подключить в Vercel dashboard)
-- **Prod URL:** `https://montenegro-app.vercel.app`
-- **GitHub:** `sergchepinoga/montenegro-monitor` (аккаунт `sergchepinoga`) — НИКОГДА не использовать CHEVORA
-- **Vercel:** аккаунт `schepinoga` / workspace `schepinogas-projects`
-- **Dev порт:** 3456 (`npm run dev -- --port 3456`)
-- **Vercel token:** в памяти Claude (project_journey_yerevan.md)
-- **GitHub PAT (sergchepinoga classic):** в памяти Claude (сессия 11.05.2026)
+## URLs
+- **Prod:** `https://montenegro.chepinoga.com` ✅
+- **Vercel alias:** `https://montenegro-app.vercel.app`
+- **Dev:** `npm run dev -- --port 3456` → http://localhost:3456
+
+## Tokens (хранить в памяти, НЕ в коде)
+- Vercel token: в `project_journey_yerevan.md` памяти → `vcp_1OTM...`
+- GitHub PAT sergchepinoga (classic): `ghp_***[в памяти Claude]`
+- Telegram bot token: `***[в памяти Claude]`
+- Deploy: `vercel --token vcp_... --yes --scope schepinogas-projects --prod`
+- Git push: `git push "https://sergchepinoga:ghp_VBGb...@github.com/sergchepinoga/montenegro-monitor.git" main`
 
 ## Stack
-- Next.js 16 + TypeScript + React 19
-- Tailwind CSS v4 (`@import "tailwindcss"`)
-- node-cron (local), Vercel Cron (prod — 1x/day at 07:00 UTC = 09:00 Подгорица)
-- pdftotext (системная утилита, для парсинга PDF в отдельных сессиях Claude)
-- Хранилище: `monitor-state.json` в корне (local + Vercel ephemeral)
+- Next.js 16 + TypeScript + React 19 + Tailwind v4
+- `@import "tailwindcss"` (НЕ `@tailwind base`)
+- НЕТ Supabase, НЕТ Prisma
+- pdftotext (системная утилита `/opt/homebrew/bin/pdftotext`) — для PDF, НЕ npm pdf-parse (конфликт ESM)
+
+## Vercel + Storage
+- **`/tmp`** — единственная writable папка на Vercel serverless
+- `monitor-state.json` пишется в `/tmp` (ephemeral между инвокациями!)
+- Env var `VERCEL` существует на проде → `process.env.VERCEL ? "/tmp/..." : process.cwd()+"/..."`
+- Hobby plan: max 1 cron/day → используем cron-job.org для второго запуска
+
+## GitHub Actions (browser agents)
+- Repo: `sergchepinoga/montenegro-agents`
+- Запускать: `gh api repos/sergchepinoga/montenegro-agents/actions/workflows/monitor.yml/dispatches --method POST -f ref=main`
+- Secrets: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, VERCEL_URL, CRON_SECRET
+- НЕ можно вызывать внутренние Vercel API routes из cron endpoint (serverless self-call не работает)
+
+## Расписание агентов
+- 09:05 Братислава (07:05 UTC) — GitHub Actions
+- 20:05 Братислава (18:05 UTC) — GitHub Actions + cron-job.org job #7589398
+- Vercel Cron: `0 7 * * *` (только 09:00 — Hobby ограничение)
+
+## Telegram
+- Бот: @Montenegro_capitalplusbot
+- Chat ID Сергея: `73116273` (проверено)
+- Env vars в Vercel: `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID`
+
+## 8 Вкладок
+1. **Обзор** — командный центр, обратный отсчёт до заседания
+2. **Суд. дела** — 5 дел, кнопка «🤖 Запустить агента»
+3. **Банченко** — мониторинг лиц: Владимир, Славица, Hrast CG, Romulus Partners
+4. **Стоимость** — 4 сценария, аналоги рынка
+5. **Актив** — LN 977 + LN 989 + Capital Plus DOO
+6. **Локация** — Google Maps + фото
+7. **Проект** — 3D рендеры + PDF проекта + контакт +421 904 878 937
+8. **Мониторинг** — 22 источника с аккордеоном + агенты дел
 
 ## API Routes
-- `GET/POST /api/monitor` — проверка источников мониторинга (22 источника)
-- `POST /api/case-agent` — агент по конкретным делам (сканирует суд по номерам дел)
-- `GET /api/case-agent` — статус последних проверок агента по делам
-- `DELETE /api/case-update` — удалить обновление дела
-- `GET /api/cron` — cron endpoint (запускает ВСЕ источники + агенты дел)
+- `GET/POST /api/monitor` — проверка источников
+- `POST /api/case-agent` — агент по номерам дел (ищет в sudovi.me)
+- `DELETE /api/case-update` — удалить обновление
+- `GET /api/cron` — main cron (принимает `?secret=` ИЛИ `Authorization: Bearer`)
+- `POST /api/parse-pdf` — парсинг PDF через pdftotext (системная утилита)
 
-## Ключевые правила
-- **NO PDF upload** на сайте — PDF разбираются отдельно в сессиях Claude
-- Агенты сами находят обновления в официальных источниках суда
-- Язык интерфейса: РУССКИЙ (профессиональный перевод, не дословный сербский)
-- Суд = "Коммерческий суд" (НЕ "Привредни суд")
-- Прокуратура = "Государственная прокуратура" (НЕ "Тужилаштво")
-- Коммиты: footer = `CHEVORA OU. All rights reserved. Powered by Sergej Chepinoga.`
+## Актив: земля
+- LN 977: уч. 634 = 6 039 м² · LN 989: уч. 16-20 = 2 628 м² · Итого 8 667 м²
+- КО Бечичи · над Splendid 5★ · 800 м от моря · Ивановичи, Будва
 
-## Архитектура мониторинга
-```
-Vercel Cron (09:00 Подгорица ежедневно)
-  → /api/cron
-    → /api/monitor (22 источника: суды, кадастр, CRPS, налоги, прокуратура, рынок)
-    → /api/case-agent (5 дел: P.24/21, P.596/22, P.785/22, UPI224/22, Kt.96/25)
-      → scanners: sudovi.me/pscg/odluke/ + sudovi.me расписание
-      → при найденном обновлении → saveUpdate(source:"🤖 Агент") + Telegram alert
-```
-
-## Актив
-- **Итого:** 8 667 м² в Бечичи/Ивановичи, Будва, КО Бечичи
-  - LN 977: уч. 634 = 6 039 м²
-  - LN 989: уч. 16–20 = 2 628 м²
-- Коэф. 1.6 → до 13 867 м² · Ц+3+подвал · до моря 800 м
-- Оценка 2021: €2.11M · Реалист. 2026: €3.21M (370 €/м²)
-
-## Компания: Capital Plus DOO
-- ПИБ: 0000002697394 · Подгорица
+## Компания
+- Capital Plus DOO · ПИБ 0000002697394 · Подгорица
 - Законный учредитель: Чепинога Сергей ✅
-- Незаконный директор: Банченко В. ⚠️
+- Незаконный директор: Банченко Владимир ⚠️
 
-## Судебные дела
-| Дело | Суть | Статус | Следующее |
-|---|---|---|---|
-| P.24/21 | Исключение Банченко | АКТИВНОЕ | 29.05.2026 |
-| P.596/22 | Отмена договора | АКТИВНОЕ | ждём даты |
-| P.785/22 | Capital Plus vs Hrast | ПРИОСТАНОВЛЕНО | — |
-| UPI224/22 | Кадастровая отметка | ИСПОЛНЕНО | — |
-| Kt.96/25 | Уголовное vs Банченко | АКТИВНОЕ | — |
+## 5 Судебных дел
+| Дело | Суть | Следующее |
+|---|---|---|
+| P.24/21 | Исключение Банченко | 29.05.2026 |
+| P.596/22 | Отмена договора→возврат земли | ждём |
+| P.785/22 | Capital Plus vs Hrast CG | приост. |
+| UPI224/22 | Кадастровая отметка | исп. |
+| Kt.96/25 | Уголовное vs Банченко | активное |
 
-## 7 вкладок сайта
-1. **Обзор** — command center: алерт-баннер (18 дней до заседания), KPI, все дела, события
-2. **Суд. дела** — 5 дел + агентские обновления + ручной запуск агента
-3. **Стоимость** — 4 сценария + аналоги рынка
-4. **Актив** — LN 977 + LN 989 + Capital Plus DOO
-5. **Локация** — Google Maps + схемы + фото участка
-6. **Проект** — 3D рендеры + PDF документы проекта
-7. **Мониторинг** — 22 источника с кнопкой проверки
+## Банченко (ответчики)
+- Владимир Банченко (Украина) — директор Capital Plus DOO ⚠️
+- Славица Банченко — соответчик P.24/21
+- Hrast CG DOO (директор Lazar Radnić) — незаконный получатель земли
+- Romulus Partners DOO — четвёртый получатель
+- Уголовное Kt.96/25: мошенничество (244), злоупотребление (272), подлог (412)
+
+## eKatastar (кадастр)
+- URL: `https://www.ekatastar.me/ekatastar-web/action/elogin`
+- Публичный логин: `KORISNIK` / `KORISNIK`
+- Поиск: «Pretraga po nosiocu prava» → Capital Plus
+
+## Терминология (ОБЯЗАТЕЛЬНО)
+- «Коммерческий суд» (НЕ «Привредни суд»)
+- «Государственная прокуратура» (НЕ «Тужилаштво»)
+- «Управление недвижимостью» (НЕ «Управа за некретнине»)
 
 ## Адвокат
-- Law Office Vujačić (Саша Вуячич) · +382 20 229 725
-- info@lawoffice-vujacic.com · Bul. Ivana Crnojevića 56/2, Podgorica
+- Law Office Vujačić (Саша Вуячич)
+- Тел: **+382 67 538 885** · info@lawoffice-vujacic.com
 
-## Расписание агентов (Братислава UTC+2 летом)
-- **Запуск 1:** Vercel Cron · `0 7 * * *` · **09:00 Братислава**
-- **Запуск 2:** cron-job.org · `0 18 * * *` · **20:00 Братислава**
+## Правила разработки
+- Язык интерфейса: РУССКИЙ (профессиональный, не дословный сербский)
+- NO PDF upload на сайте — PDF через отдельные сессии Claude
+- Коммиты footer: `CHEVORA OU. All rights reserved. Powered by Sergej Chepinoga.`
+- НЕ использовать `chevora` или `Agonsg` аккаунты GitHub для этого проекта
+- Медиафайлы: `/public/media/{location,pictures,project}/`
 
-### Настройка cron-job.org (бесплатно, для 20:00)
-1. Зайдите на **cron-job.org** → Sign Up (бесплатно)
-2. Create cronjob:
-   - Title: `Montenegro Monitor Evening`
-   - URL: `https://montenegro-app.vercel.app/api/cron`
-   - Schedule: Every day at **18:00 UTC**
-   - Request method: GET
-   - Headers: `Authorization: Bearer mont2026secret`
-3. Save → Enable
+## Стратегии выхода
+1. Продажа земли (после победы в P.596/22) — €2.6M–€6.1M
+2. Со-инвестиция → строительство → продажа квартир
+3. Продажа компании Capital Plus DOO с землёй
 
-## Telegram (при наличии токена)
-- Env: `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID=73116273`
-- Алерты при: изменениях в мониторинге + найденных обновлениях по делам
+## GitHub Actions — важные детали
+- Приватный репо требует `permissions: contents: read` в workflow
+- Cleanup action: `Mattraks/delete-workflow-runs@v2` — ставить `continue-on-error: true`
+- НЕ делать `needs: cleanup` — browser-agents должны быть независимыми
+- Timeout: 25 минут (браузерные агенты медленные)
