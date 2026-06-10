@@ -29,7 +29,7 @@ interface MonitorState {
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
 
-const TODAY = "11.05.2026";
+const TODAY = "10.06.2026";
 const AREA_M2 = 8667;
 
 const PRICE_SCENARIOS = [
@@ -51,14 +51,14 @@ const CASES = [
     history: ["12.01.2021 — Подача иска","2023 — Смена судьи → пауза до дек. 2023","06.12.2023 — Первое заседание с новым судьёй","2024 — 8 заседаний","2025 — 6 заседаний + ходатайства","2026 — 5 заседаний (янв.–апр.)","29.05.2026 — Следующее заседание ⟵"],
   },
   {
-    id: "P.596/22", status: "active", statusLabel: "АКТИВНОЕ",
+    id: "P.596/22", status: "won", statusLabel: "ПОБЕДА ✓",
     title: "Отмена договора о совместном строительстве",
     court: "Коммерческий суд Черногории", started: "24.12.2021",
-    nextHearing: "08.05.2026",
-    lastAction: "24.03.2026 — Судья: «передача незаконна». Планирует направить дело прокурору.",
-    summary: "Отмена договора UZZ 712/20, по которому земля мошеннически передана Hrast CG DOO. Мин-во отменило передачу 18.06.2025.",
+    nextHearing: "—",
+    lastAction: "04.06.2026 — Коммерческий суд: договор UZZ 712/20 признан НИЧТОЖНЫМ. Ответчики обязаны выплатить €6 806,25 судебных расходов.",
+    summary: "Решением суда от 04.06.2026 договор UZZ 712/20 о совместном строительстве признан ничтожным (фиктивная сделка). Hrast CG DOO незаконно получило права пользования землёй Capital Plus без согласия Чепиноги. Решение первой инстанции.",
     courtUrl: "https://sudovi.me/pscg",
-    history: ["24.12.2021 — Подача иска","2023 — 4 заседания + встречный иск от Hrast CG","Смена судьи → пауза апр. 2024 — март 2025","23.09.2025 — Судья: «передача незаконна»","18.06.2025 — Мин-во ОТМЕНИЛО решение UPI-1175/25","08.05.2026 — Следующее заседание"],
+    history: ["24.12.2021 — Подача иска","2023 — 4 заседания + встречный иск от Hrast CG","Смена судьи → пауза апр. 2024 — март 2025","23.09.2025 — Судья: «передача незаконна»","18.06.2025 — Мин-во ОТМЕНИЛО решение UPI-1175/25","08.05.2026 — Заключительное заседание","04.06.2026 — ✅ ПОБЕДА: суд признал договор UZZ 712/20 ничтожным. Ответчики выплатят €6 806,25."],
   },
   {
     id: "P.785/22", status: "paused", statusLabel: "ПРИОСТАНОВЛЕНО",
@@ -97,6 +97,7 @@ const STATUS_CFG: Record<string, { bg: string; text: string; dot: string; border
   paused:   { bg: "#fef3c7", text: "#92400e", dot: "#f59e0b", border: "#fde68a" },
   done:     { bg: "#dcfce7", text: "#15803d", dot: "#22c55e", border: "#bbf7d0" },
   criminal: { bg: "#f3e8ff", text: "#7e22ce", dot: "#a855f7", border: "#e9d5ff" },
+  won:      { bg: "#fefce8", text: "#854d0e", dot: "#eab308", border: "#fef08a" },
 };
 
 const ALL_SOURCES = [
@@ -272,10 +273,11 @@ const PROJECT_RENDERS = [
 ];
 
 const PROJECT_DOCS = [
-  { src: "/media/project/plan-katastar.pdf",     label: "Кадастровый план участка",              note: "slik. 4 — katastarski plan" },
-  { src: "/media/project/plan-faza1.pdf",        label: "Проект застройки — Фаза 1",             note: "slik. 5 — pl. faza 1" },
-  { src: "/media/project/plan-faza3.pdf",        label: "Проект застройки — Фаза 3",             note: "slik. 7 — pl. faza 3" },
-  { src: "/media/project/situacija-temelja.pdf", label: "Ситуация фундаментов (план оснований)", note: "slik. 19 — Situacija temelja" },
+  { src: "/media/project/presuda-P596-22-04062026.pdf", label: "🏆 Решение суда P.596/22 — Победа 04.06.2026", note: "Privredni sud CG · Договор UZZ 712/20 признан ничтожным" },
+  { src: "/media/project/plan-katastar.pdf",            label: "Кадастровый план участка",                     note: "slik. 4 — katastarski plan" },
+  { src: "/media/project/plan-faza1.pdf",               label: "Проект застройки — Фаза 1",                    note: "slik. 5 — pl. faza 1" },
+  { src: "/media/project/plan-faza3.pdf",               label: "Проект застройки — Фаза 3",                    note: "slik. 7 — pl. faza 3" },
+  { src: "/media/project/situacija-temelja.pdf",        label: "Ситуация фундаментов (план оснований)",         note: "slik. 19 — Situacija temelja" },
 ];
 
 export default function Home() {
@@ -534,12 +536,12 @@ export default function Home() {
               <Card>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
                   <Sec>📋 Последние события</Sec>
-                  <span style={{ fontSize: "10px", color: "#94a3b8" }}>11.05.2026</span>
+                  <span style={{ fontSize: "10px", color: "#94a3b8" }}>10.06.2026</span>
                 </div>
                 {[
+                  { date: "04.06.2026", text: "🏆 P.596/22: ПОБЕДА — договор UZZ 712/20 признан НИЧТОЖНЫМ. Ответчики выплатят €6 806,25.", color: "#854d0e", urgent: true },
                   { date: "30.04.2026", text: "P.24/21: заседание прошло, ожидаем финансового эксперта", color: "#1d4ed8", urgent: true },
-                  { date: "07.04.2026", text: "Kt.96/25: полиция не предоставила материалы, 6 ургенций", color: "#dc2626", urgent: true },
-                  { date: "24.03.2026", text: "P.596/22: судья «передача незаконна»", color: "#1d4ed8", urgent: false },
+                  { date: "07.04.2026", text: "Kt.96/25: полиция не предоставила материалы, 6 ургенций", color: "#dc2626", urgent: false },
                   { date: "18.06.2025", text: "Мин-во ОТМЕНИЛО решение UPI-1175/25 ✅", color: "#15803d", urgent: false },
                 ].map((e, i) => (
                   <div key={i} style={{ display: "flex", gap: "10px", padding: "7px 0", borderBottom: i < 3 ? "1px solid #f1f5f9" : "none", alignItems: "flex-start" }}>
@@ -552,8 +554,8 @@ export default function Home() {
                 <div style={{ marginTop: "10px", padding: "10px 12px", background: "#f0fdf4", borderRadius: "7px", border: "1px solid #bbf7d0" }}>
                   <div style={{ fontSize: "10px", fontWeight: 700, color: "#15803d", textTransform: "uppercase", letterSpacing: "0.4px", marginBottom: "6px" }}>Следующие действия</div>
                   {[
-                    "29.05.2026 — Заседание P.24/21 (Коммерческий суд)",
-                    "Уточнить у адвоката статус P.596/22 (08.05.2026)",
+                    "Получить официальный экземпляр решения P.596/22 у адвоката",
+                    "Отслеживать апелляцию ответчиков (срок — 8 дней с получения)",
                     "Запросить обновление по Kt.96/25 (полиция)",
                   ].map((step, i) => (
                     <div key={i} style={{ fontSize: "11px", color: "#374151", padding: "3px 0", display: "flex", gap: "6px" }}>
@@ -646,10 +648,10 @@ export default function Home() {
             {/* Cases mini-dashboard */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "10px", marginBottom: "20px" }}>
               {[
-                { label: "Активных",      val: "3",            sub: "P.24/21 · P.596/22 · Kt.96/25", color: "#3b82f6" },
-                { label: "Приостановлено", val: "1",           sub: "P.785/22 — адвокат не явился",  color: "#f59e0b" },
-                { label: "Исполнено",     val: "1",            sub: "UPI224/22 — кадастр ✅",         color: "#22c55e" },
-                { label: "Следующее",     val: "29.05.2026",   sub: "P.24/21 · через 18 дней",        color: "#ef4444" },
+                { label: "Активных",      val: "2",            sub: "P.24/21 · Kt.96/25",             color: "#3b82f6" },
+                { label: "Победа",        val: "1",            sub: "P.596/22 — договор ничтожен ✅",  color: "#eab308" },
+                { label: "Исполнено",     val: "2",            sub: "UPI224/22 · P.785/22 закрыто",   color: "#22c55e" },
+                { label: "Следующее",     val: "P.24/21",      sub: "Ожидаем финансового эксперта",    color: "#ef4444" },
               ].map(k => (
                 <div key={k.label} style={{ background: "#fff", borderRadius: "10px", padding: "12px 14px", border: "1px solid #e2e8f0", borderTop: `3px solid ${k.color}` }}>
                   <div style={{ fontSize: "18px", fontWeight: 800, color: "#0f172a", marginBottom: "2px" }}>{k.val}</div>
@@ -1118,7 +1120,7 @@ export default function Home() {
                 { icon: "📐", val: "13 867 м²",  label: "Застраиваемая площадь", sub: "Коэф. 1.6 × 8 667 м²" },
                 { icon: "🔢", val: "3 фазы",     label: "Фаз строительства", sub: "Фаза 1 — фундаменты готовы" },
                 { icon: "📊", val: "€370+/м²",   label: "Рыночная цена 2026", sub: "Рост с €244/м² (2021)" },
-                { icon: "⏸️", val: "Приостановлен", label: "Статус", sub: "Ждём решения P.596/22" },
+                { icon: "✅", val: "P.596/22 выигран", label: "Статус", sub: "Договор ничтожен — 04.06.2026" },
               ].map(k => (
                 <div key={k.label} style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "10px", padding: "14px 16px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", textAlign: "center" }}>
                   <div style={{ fontSize: "22px", marginBottom: "6px" }}>{k.icon}</div>
@@ -1173,7 +1175,7 @@ export default function Home() {
             <Card>
               <Sec>3D рендеры и архитектурные модели застройки</Sec>
               <p style={{ fontSize: "12px", color: "#475569", marginBottom: "14px", lineHeight: "1.5" }}>
-                Архитектурный проект предусматривает строительство жилого комплекса в черногорском средиземноморском стиле. 26 четырёхэтажных вилл с бассейнами, паркингом и инфраструктурой. Проект заморожен до решения суда по делу P.596/22.
+                Архитектурный проект предусматривает строительство жилого комплекса в черногорском средиземноморском стиле. 26 четырёхэтажных вилл с бассейнами, паркингом и инфраструктурой. Решением Коммерческого суда от 04.06.2026 по делу P.596/22 договор о незаконной передаче земли признан ничтожным.
               </p>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px,1fr))", gap: "12px" }}>
                 {PROJECT_RENDERS.map((p, i) => (
